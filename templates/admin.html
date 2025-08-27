@@ -1,0 +1,278 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<main class="admin-approvals-container">
+  <h1 class="admin-approvals-title">Admin Panel – Approvals</h1>
+
+  <!-- Donor Requests -->
+  <section class="approvals-section">
+    <h2 class="section-heading">Pending Donors</h2>
+    {% if donors %}
+    <div class="table-wrapper">
+      <table class="approvals-table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>City</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for donor in donors %}
+            {% if donor.status == 'pending' %}
+            <tr>
+              <td>{{ donor.full_name }}</td>
+              <td>{{ donor.email }}</td>
+              <td>{{ donor.city }}</td>
+              <td class="action-buttons">
+                <form action="/admin/approve" method="POST">
+                  <input type="hidden" name="role" value="donor">
+                  <input type="hidden" name="email" value="{{ donor.email }}">
+                  <button type="submit" class="approve-btn">Approve</button>
+                </form>
+                <form action="/admin/reject" method="POST">
+                  <input type="hidden" name="role" value="donor">
+                  <input type="hidden" name="email" value="{{ donor.email }}">
+                  <button type="submit" class="reject-btn">Reject</button>
+                </form>
+              </td>
+            </tr>
+            {% endif %}
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <p class="no-requests">No pending donor requests</p>
+    {% endif %}
+  </section>
+
+  <!-- Finder Requests -->
+  <section class="approvals-section">
+    <h2 class="section-heading">Pending Finders</h2>
+    {% if finders %}
+    <div class="table-wrapper">
+      <table class="approvals-table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>City</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for finder in finders %}
+            {% if finder.status == 'pending' %}
+            <tr>
+              <td>{{ finder.full_name }}</td>
+              <td>{{ finder.email }}</td>
+              <td>{{ finder.city }}</td>
+              <td class="action-buttons">
+                <form action="/admin/approve" method="POST">
+                  <input type="hidden" name="role" value="finder">
+                  <input type="hidden" name="email" value="{{ finder.email }}">
+                  <button type="submit" class="approve-btn">Approve</button>
+                </form>
+                <form action="/admin/reject" method="POST">
+                  <input type="hidden" name="role" value="finder">
+                  <input type="hidden" name="email" value="{{ finder.email }}">
+                  <button type="submit" class="reject-btn">Reject</button>
+                </form>
+              </td>
+            </tr>
+            {% endif %}
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <p class="no-requests">No pending finder requests</p>
+    {% endif %}
+  </section>
+</main>
+
+<style>
+  /* ===== BASE STYLES ===== */
+  .admin-approvals-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+
+  .admin-approvals-title {
+    font-size: 2rem;
+    color: #d32f2f;
+    text-align: center;
+    margin-bottom: 30px;
+    font-weight: 700;
+  }
+
+  .dark-mode .admin-approvals-title {
+    color: #ef5350;
+  }
+
+  /* ===== SECTION STYLES ===== */
+  .approvals-section {
+    margin-bottom: 40px;
+  }
+
+  .section-heading {
+    font-size: 1.5rem;
+    color: #333;
+    margin-bottom: 20px;
+    font-weight: 600;
+  }
+
+  .dark-mode .section-heading {
+    color: #f0f0f0;
+  }
+
+  /* ===== TABLE STYLES ===== */
+  .table-wrapper {
+    overflow-x: auto;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  }
+
+  .dark-mode .table-wrapper {
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+  }
+
+  .approvals-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+    color: #333;
+  }
+
+  .dark-mode .approvals-table {
+    background: #2d3748;
+    color: #f0f0f0;
+  }
+
+  .approvals-table th,
+  .approvals-table td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #e0e0e0;
+  }
+
+  .dark-mode .approvals-table th,
+  .dark-mode .approvals-table td {
+    border-bottom: 1px solid #4a5568;
+  }
+
+  .approvals-table th {
+    background: #f5f5f5;
+    font-weight: 600;
+  }
+
+  .dark-mode .approvals-table th {
+    background: #1a202c;
+  }
+
+  .approvals-table tr:hover {
+    background: #f5f5f5;
+  }
+
+  .dark-mode .approvals-table tr:hover {
+    background: #4a5568;
+  }
+
+  /* ===== ACTION BUTTONS ===== */
+  .action-buttons {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .approve-btn, .reject-btn {
+    padding: 6px 12px;
+    border: none;
+    border-radius: 4px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .approve-btn {
+    background: #388e3c;
+    color: white;
+  }
+
+  .approve-btn:hover {
+    background: #2e7d32;
+  }
+
+  .reject-btn {
+    background: #d32f2f;
+    color: white;
+  }
+
+  .reject-btn:hover {
+    background: #b71c1c;
+  }
+
+  /* ===== NO REQUESTS STYLE ===== */
+  .no-requests {
+    padding: 15px;
+    background: #f5f5f5;
+    border-radius: 8px;
+    color: #757575;
+    text-align: center;
+  }
+
+  .dark-mode .no-requests {
+    background: #424242;
+    color: #bdbdbd;
+  }
+
+  /* ===== RESPONSIVE ADJUSTMENTS ===== */
+  @media (max-width: 768px) {
+    .admin-approvals-title {
+      font-size: 1.8rem;
+    }
+
+    .section-heading {
+      font-size: 1.3rem;
+    }
+
+    .approvals-table th,
+    .approvals-table td {
+      padding: 10px;
+      font-size: 0.9rem;
+    }
+
+    .action-buttons {
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .approve-btn, .reject-btn {
+      width: 100%;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .admin-approvals-container {
+      padding: 15px;
+    }
+
+    .admin-approvals-title {
+      font-size: 1.5rem;
+      margin-bottom: 20px;
+    }
+
+    .approvals-table th,
+    .approvals-table td {
+      padding: 8px;
+      font-size: 0.85rem;
+    }
+  }
+</style>
+
+{% endblock %}

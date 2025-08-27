@@ -1,0 +1,740 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<main class="main-content">
+
+  <!-- HERO SECTION -->
+  <section class="hero-section">
+    <div class="hero-content">
+      <h1 class="hero-title">
+        Every Drop Counts<br />Every Life Matters
+      </h1>
+      <p class="hero-description">
+        Join Pakistan's premier blood donation platform. Connect donors with
+        those in need, save lives, and make a difference in your community.
+      </p>
+      <div class="button-group">
+        {% if session.get('user_type') == 'donor' %}
+        <a href="{{ url_for('donor_dashboard', email=session.get('email')) }}" class="donor-btn">Become a Donor</a>
+        <a href="/signup/finder" class="finder-btn">Find Blood</a>
+
+        {% elif session.get('user_type') == 'finder' %}
+        <a href="/signup/donor" class="donor-btn">Become a Donor</a>
+        <a href="{{ url_for('finder_dashboard', email=session.get('email')) }}" class="finder-btn">Find Blood</a>
+
+        {% else %}
+        <a href="/signup/donor" class="donor-btn">Become a Donor</a>
+        <a href="/signup/finder" class="finder-btn">Find Blood</a>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Right Stats -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <h3 class="stat-title">Registered Donors</h3>
+        <p class="stat-number count-up" data-target="{{ donors_count }}">0</p>
+      </div>
+      <div class="stat-card">
+        <h3 class="stat-title">Lives Saved</h3>
+        <p class="stat-number count-up" data-target="{{ lives_saved }}">0</p>
+      </div>
+      <div class="stat-card">
+        <h3 class="stat-title">Blood Requests</h3>
+        <p class="stat-number count-up" data-target="{{ requests_count }}">0</p>
+      </div>
+      <div class="stat-card">
+        <h3 class="stat-title">Cities Covered</h3>
+        <p class="stat-number count-up" data-target="{{ cities_covered }}">0</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- WHY CHOOSE SECTION -->
+  <section class="why-choose-section">
+    <h1 class="section-title">Why Choose Vein2Vein?</h1>
+    <p class="section-description">
+      Advanced technology meets compassionate care to create Pakistan's most trusted blood donation platform.
+    </p>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">
+          <i class="fas fa-user-shield"></i>
+        </div>
+        <h3 class="feature-title">Verified Donors</h3>
+        <p class="feature-description">
+          All donors undergo comprehensive medical screening and email verification for your safety.
+        </p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">
+          <i class="fas fa-map-marker-alt"></i>
+        </div>
+        <h3 class="feature-title">Location Matching</h3>
+        <p class="feature-description">
+          Smart location-based matching connects you with nearby donors for faster response times.
+        </p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">
+          <i class="fas fa-bell"></i>
+        </div>
+        <h3 class="feature-title">Instant Notifications</h3>
+        <p class="feature-description">
+          Real-time email notifications ensure donors respond quickly to urgent blood requests.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- BLOOD TYPE COMPATIBILITY -->
+  <section class="blood-type-section">
+    <h1 class="section-title">Blood Type Compatibility</h1>
+    <p class="section-description">
+      Understanding blood types is crucial for safe donations. Our system automatically matches compatible donors.
+    </p>
+    <div class="blood-types-grid">
+      <div class="blood-type-card">
+        <div class="blood-drop o-negative">
+          <span>O-</span>
+        </div>
+        <h3 class="blood-type-title">O-</h3>
+        <p class="blood-type-description">
+          Universal Donor<br />Can donate to all blood types
+        </p>
+      </div>
+      <div class="blood-type-card">
+        <div class="blood-drop ab-positive">
+          <span>AB+</span>
+        </div>
+        <h3 class="blood-type-title">AB+</h3>
+        <p class="blood-type-description">
+          Universal Recipient<br />Can receive from all blood types
+        </p>
+      </div>
+      <div class="blood-type-card">
+        <div class="blood-drop a-positive">
+          <span>A+</span>
+        </div>
+        <h3 class="blood-type-title">A+</h3>
+        <p class="blood-type-description">Common Type<br />High demand blood type</p>
+      </div>
+      <div class="blood-type-card">
+        <div class="blood-drop o-positive">
+          <span>O+</span>
+        </div>
+        <h3 class="blood-type-title">O+</h3>
+        <p class="blood-type-description">Most Common<br />38% of population</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- CITIES MAP -->
+  <section class="cities-section">
+    <h1 class="section-title">Cities We Serve</h1>
+    <p class="section-description">
+      Vein2Vein connects donors and seekers across major Pakistani cities.
+    </p>
+    <div id="map" class="map-container"></div>
+  </section>
+
+  <!-- FINAL CTA -->
+  <section class="cta-section">
+    <h1 class="hero-title">Ready to Save Lives?</h1>
+    <p class="hero-description">
+      Join thousands of heroes who are making a difference in Pakistan. Every donation counts, every life matters.
+    </p>
+    <div class="cta-buttons">
+      {% if session.get('user_type') == 'donor' %}
+      <a href="{{ url_for('donor_dashboard', email=session.get('email')) }}" class="donor-btn">Become a Donor</a>
+      <a href="/signup/finder" class="finder-btn">Find Blood</a>
+
+      {% elif session.get('user_type') == 'finder' %}
+      <a href="/signup/donor" class="donor-btn">Become a Donor</a>
+      <a href="{{ url_for('finder_dashboard', email=session.get('email')) }}" class="finder-btn">Find Blood</a>
+
+      {% else %}
+      <a href="/signup/donor" class="donor-btn">Become a Donor</a>
+      <a href="/signup/finder" class="finder-btn">Find Blood</a>
+      {% endif %}
+    </div>
+  </section>
+
+  <!-- External Libraries -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script>
+    // Counter Animation
+    const counters = document.querySelectorAll('.count-up');
+    const speed = 200;
+
+    function animateCounter(counter) {
+      const target = +counter.getAttribute('data-target');
+      let count = 0;
+
+      const updateCount = () => {
+        const increment = target / speed;
+        if (count < target) {
+          count += increment;
+          counter.innerText = Math.ceil(count);
+          requestAnimationFrame(updateCount);
+        } else {
+          counter.innerText = target;
+        }
+      };
+
+      updateCount();
+    }
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          animateCounter(entry.target);
+        }
+      });
+    }, { threshold: 0.5 });
+
+    counters.forEach(counter => {
+      observer.observe(counter);
+    });
+
+    // Map initialization
+    const citiesFromServer = JSON.parse('{{ cities | tojson | safe }}');
+    const cityCoordinates = {
+      "Lahore": [31.5497, 74.3436],
+      "Karachi": [24.8607, 67.0011],
+      "Islamabad": [33.6844, 73.0479],
+      "Rawalpindi": [33.5651, 73.0169],
+      "Faisalabad": [31.4504, 73.1350],
+      "Multan": [30.1575, 71.5249],
+      "Peshawar": [34.0151, 71.5249],
+      "Quetta": [30.1798, 66.9750],
+      "Hyderabad": [25.3960, 68.3578],
+      "Gujranwala": [32.1877, 74.1945]
+    };
+
+    const map = L.map('map').setView([30.3753, 69.3451], 5);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+
+    const added = {};
+
+    citiesFromServer.forEach(function(city) {
+      if (!added[city] && cityCoordinates[city]) {
+        const marker = L.marker(cityCoordinates[city]).addTo(map)
+          .bindPopup('<strong>' + city + '</strong><br>Registered Donors');
+        added[city] = true;
+      }
+    });
+
+    // Scroll Animation
+    function animateOnScroll() {
+      const elements = document.querySelectorAll('.hero-section, .why-choose-section, .blood-type-section, .cities-section, .cta-section');
+
+      elements.forEach(element => {
+        const elementTop = element.getBoundingClientRect().top;
+        const windowHeight = window.innerHeight;
+
+        if (elementTop < windowHeight * 0.75) {
+          element.style.opacity = '1';
+          element.style.transform = 'translateY(0)';
+        }
+      });
+    }
+
+    // Initialize animations
+    window.addEventListener('load', () => {
+      document.querySelectorAll('.hero-section, .why-choose-section, .blood-type-section, .cities-section, .cta-section').forEach(el => {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(20px)';
+        el.style.transition = 'all 0.6s ease';
+      });
+
+      animateOnScroll();
+    });
+
+    window.addEventListener('scroll', animateOnScroll);
+  </script>
+
+  <style>
+    /* ===== BASE STYLES ===== */
+    :root {
+      --primary-red: #e60000;
+      --primary-green: #01af01;
+      --primary-blue: #027cdf;
+      --primary-purple: #5c07dc;
+      --light-red: #ffcccc;
+      --dark-red: #c50000;
+      --white: #ffffff;
+      --light-bg: #f8f9fa;
+      --dark-bg: #1e1e1e;
+      --text-light: #222222;
+      --text-dark: #f0f0f0;
+      --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      --transition: all 0.3s ease;
+    }
+
+    .main-content {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      line-height: 1.6;
+      color: var(--text-light);
+      padding: 0 1rem;
+    }
+
+    .dark-mode .main-content {
+      color: var(--text-dark);
+      background-color: var(--dark-bg);
+    }
+
+    /* ===== SECTION STYLES ===== */
+    section {
+      padding: 3rem 0;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .section-title {
+      font-size: 2rem;
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 1.5rem;
+      color: var(--primary-red);
+      position: relative;
+    }
+
+    .dark-mode .section-title {
+      color: var(--primary-red);
+    }
+
+    .section-title::after {
+      content: '';
+      position: absolute;
+      bottom: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80px;
+      height: 4px;
+      background: var(--primary-red);
+    }
+
+    .section-description {
+      font-size: 1.1rem;
+      text-align: center;
+      max-width: 800px;
+      margin: 0 auto 3rem;
+      color: var(--text-light);
+      opacity: 0.9;
+      padding: 0 1rem;
+    }
+
+    .dark-mode .section-description {
+      color: var(--text-dark);
+    }
+
+    /* ===== HERO SECTION ===== */
+    .hero-section {
+      background: linear-gradient(135deg, var(--primary-red), var(--light-red));
+      border-radius: 1rem;
+      padding: 2rem 1rem;
+      margin: 1rem auto;
+      text-align: center;
+      color: var(--white);
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-title {
+      font-size: 2rem;
+      font-weight: 800;
+      margin-bottom: 1rem;
+      line-height: 1.2;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      padding: 0 1rem;
+    }
+
+    .hero-description {
+      font-size: 1rem;
+      max-width: 700px;
+      margin: 0 auto 1.5rem;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+      padding: 0 1rem;
+    }
+
+    .button-group {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin-top: 1.5rem;
+      flex-wrap: wrap;
+      padding: 0 1rem;
+    }
+
+    .donor-btn,
+    .finder-btn {
+      padding: 0.8rem 1.5rem;
+      border-radius: 50px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: var(--transition);
+      box-shadow: var(--shadow);
+      font-size: 0.9rem;
+    }
+
+    .donor-btn {
+      background-color: var(--white);
+      color: var(--primary-red);
+    }
+
+    .donor-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .finder-btn {
+      background-color: var(--primary-red);
+      color: var(--white);
+      border: 2px solid var(--white);
+    }
+
+    .finder-btn:hover {
+      background-color: var(--dark-red);
+      transform: translateY(-3px);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    /* Stats Grid */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+      margin-top: 2rem;
+      max-width: 800px;
+      margin-left: auto;
+      margin-right: auto;
+      padding: 0 1rem;
+    }
+
+    .stat-card {
+      background-color: rgba(255, 255, 255, 0.9);
+      border-radius: 0.5rem;
+      padding: 1rem;
+      text-align: center;
+      box-shadow: var(--shadow);
+      transition: var(--transition);
+    }
+
+    .stat-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .stat-title {
+      color: black;
+      font-size: 0.9rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+
+    .stat-number {
+      font-size: 1.8rem;
+      font-weight: 800;
+      margin-top: 0.5rem;
+    }
+
+    /* Color Classes for Stats */
+    .stat-card:nth-child(1) .stat-number {
+      color: var(--primary-red);
+    }
+
+    .stat-card:nth-child(2) .stat-number {
+      color: var(--primary-green);
+    }
+
+    .stat-card:nth-child(3) .stat-number {
+      color: var(--primary-blue);
+    }
+
+    .stat-card:nth-child(4) .stat-number {
+      color: var(--primary-purple);
+    }
+
+    /* ===== FEATURES SECTION ===== */
+    .features-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+      padding: 0 1rem;
+    }
+
+    .feature-card {
+      background-color: var(--light-bg);
+      border-radius: 0.5rem;
+      padding: 1.5rem;
+      text-align: center;
+      box-shadow: var(--shadow);
+      transition: var(--transition);
+    }
+
+    .dark-mode .feature-card {
+      background-color: #2d2d2d;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .feature-icon {
+      font-size: 2rem;
+      color: var(--primary-red);
+      margin-bottom: 1rem;
+    }
+
+    .feature-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 0.8rem;
+      color: var(--primary-red);
+    }
+
+    .feature-description {
+      color: var(--text-light);
+      opacity: 0.9;
+      font-size: 0.95rem;
+    }
+
+    .dark-mode .feature-description {
+      color: var(--text-dark);
+    }
+
+    /* ===== BLOOD TYPE SECTION ===== */
+    .blood-types-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+      padding: 0 1rem;
+    }
+
+    .blood-type-card {
+      background-color: var(--light-bg);
+      border-radius: 0.5rem;
+      padding: 1.5rem;
+      text-align: center;
+      box-shadow: var(--shadow);
+      transition: var(--transition);
+    }
+
+    .dark-mode .blood-type-card {
+      background-color: #2d2d2d;
+    }
+
+    .blood-type-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .blood-drop {
+      width: 70px;
+      height: 70px;
+      background: var(--primary-red);
+      border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1rem;
+      color: white;
+      font-size: 1.2rem;
+      font-weight: bold;
+    }
+
+    .o-negative {
+      background: var(--primary-red);
+    }
+
+    .ab-positive {
+      background: var(--primary-purple);
+    }
+
+    .a-positive {
+      background: var(--primary-blue);
+    }
+
+    .o-positive {
+      background: var(--primary-green);
+    }
+
+    .blood-type-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+
+    .blood-type-description {
+      color: var(--text-light);
+      opacity: 0.9;
+      font-size: 0.95rem;
+    }
+
+    .dark-mode .blood-type-description {
+      color: var(--text-dark);
+    }
+
+    /* ===== MAP SECTION ===== */
+    .map-container {
+      height: 400px;
+      width: 100%;
+      border-radius: 0.5rem;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      margin: 0 auto;
+    }
+
+    /* ===== CTA SECTION ===== */
+    .cta-section {
+      background: linear-gradient(135deg, var(--primary-red), var(--light-red));
+      border-radius: 1rem;
+      padding: 2rem 1rem;
+      text-align: center;
+      color: var(--white);
+      box-shadow: var(--shadow);
+      margin: 1rem auto;
+    }
+
+    .cta-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin-top: 1.5rem;
+      flex-wrap: wrap;
+      padding: 0 1rem;
+    }
+
+    /* ===== RESPONSIVE ADJUSTMENTS ===== */
+    @media (min-width: 576px) {
+      .hero-section {
+        padding: 2.5rem 1.5rem;
+      }
+
+      .hero-title {
+        font-size: 2.2rem;
+      }
+
+      .hero-description {
+        font-size: 1.1rem;
+      }
+
+      .donor-btn,
+      .finder-btn {
+        padding: 0.9rem 1.8rem;
+        font-size: 1rem;
+      }
+
+      .stats-grid {
+        gap: 1.5rem;
+      }
+
+      .stat-card {
+        padding: 1.2rem;
+      }
+
+      .stat-number {
+        font-size: 2rem;
+      }
+
+      .blood-types-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (min-width: 768px) {
+      .hero-section {
+        padding: 3rem 2rem;
+      }
+
+      .hero-title {
+        font-size: 2.5rem;
+      }
+
+      .section-title {
+        font-size: 2.2rem;
+      }
+
+      .stats-grid {
+        grid-template-columns: repeat(4, 1fr);
+      }
+
+      .features-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+
+      .blood-types-grid {
+        grid-template-columns: repeat(4, 1fr);
+      }
+
+      .feature-card,
+      .blood-type-card {
+        padding: 1.8rem;
+      }
+
+      .feature-icon {
+        font-size: 2.2rem;
+      }
+
+      .feature-title,
+      .blood-type-title {
+        font-size: 1.3rem;
+      }
+
+      .blood-drop {
+        width: 80px;
+        height: 80px;
+        font-size: 1.5rem;
+      }
+    }
+
+    @media (min-width: 992px) {
+      .hero-title {
+        font-size: 3rem;
+      }
+
+      .section-title {
+        font-size: 2.5rem;
+      }
+
+      .section-description {
+        font-size: 1.2rem;
+      }
+
+      .donor-btn,
+      .finder-btn {
+        padding: 1rem 2rem;
+        font-size: 1.1rem;
+      }
+
+      .stat-number {
+        font-size: 2.5rem;
+      }
+
+      .feature-card,
+      .blood-type-card {
+        padding: 2rem;
+      }
+
+      .feature-icon {
+        font-size: 2.5rem;
+      }
+
+      .feature-title,
+      .blood-type-title {
+        font-size: 1.5rem;
+      }
+    }
+  </style>
+</main>
+
+{% endblock %}

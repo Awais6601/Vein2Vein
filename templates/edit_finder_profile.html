@@ -1,0 +1,183 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="edit-profile-container">
+  <div class="edit-profile-header">
+    <h1>Edit Finder Profile</h1>
+  </div>
+
+  <form method="POST">
+    <div class="form-group">
+      <label for="full_name">Full Name *</label>
+      <input type="text" id="full_name" name="full_name" value="{{ finder.full_name }}" required 
+             pattern="[A-Za-z ]+" title="Only letters and spaces allowed" />
+    </div>
+
+    <div class="form-group">
+      <label for="phone">Phone *</label>
+      <input type="tel" id="phone" name="phone" value="{{ finder.phone }}" required
+             pattern="[0-9]{3}-[0-9]{7}" placeholder="03xx-xxxxxxx" />
+      <small class="input-hint">Format: 03xx-xxxxxxx</small>
+    </div>
+
+    <div class="form-group">
+      <label for="city">City *</label>
+      <input type="text" id="city" name="city" value="{{ finder.city }}" required />
+    </div>
+
+    <div class="form-group">
+      <label for="address">Address</label>
+      <input type="text" id="address" name="address" value="{{ finder.address }}" />
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" class="save-btn">Save Changes</button>
+    </div>
+  </form>
+</div>
+
+<style>
+  /* ===== BASE STYLES ===== */
+  .edit-profile-container {
+    max-width: 36rem;
+    margin: 1.875rem auto;
+    padding: 1.875rem;
+    background: #fff;
+    border-radius: 0.5rem;
+    border: 1px solid #e0e0e0;
+    box-shadow: 0 0.125rem 0.625rem rgba(0, 0, 0, 0.1);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+
+  /* ===== HEADER STYLES ===== */
+  .edit-profile-header {
+    text-align: center;
+    margin-bottom: 1.875rem;
+  }
+
+  .edit-profile-header h1 {
+    color: #d10000;
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 0.3125rem;
+  }
+
+  /* ===== FORM STYLES ===== */
+  .form-group {
+    margin-bottom: 1.25rem;
+  }
+
+  .form-group label {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #333;
+    margin-bottom: 0.375rem;
+  }
+
+  .form-group input {
+    width: 100%;
+    padding: 0.625rem 0.75rem;
+    font-size: 0.875rem;
+    border: 1px solid #ddd;
+    border-radius: 0.25rem;
+    background-color: #f9f9f9;
+    transition: all 0.2s ease;
+  }
+
+  .form-group input:focus {
+    border-color: #d10000;
+    outline: none;
+    background-color: #fff;
+    box-shadow: 0 0 0 0.125rem rgba(209, 0, 0, 0.1);
+  }
+
+  .input-hint {
+    display: block;
+    margin-top: 0.25rem;
+    font-size: 0.75rem;
+    color: #666;
+  }
+
+  /* ===== BUTTON STYLES ===== */
+  .form-actions {
+    margin-top: 1.875rem;
+    text-align: center;
+  }
+
+  .save-btn {
+    background-color: #d10000;
+    color: white;
+    border: none;
+    padding: 0.625rem 1.5625rem;
+    font-size: 0.9375rem;
+    font-weight: 500;
+    border-radius: 0.25rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .save-btn:hover {
+    background-color: #b50000;
+    transform: translateY(-0.0625rem);
+  }
+
+  .save-btn:active {
+    transform: translateY(0);
+  }
+
+  /* ===== DARK MODE STYLES ===== */
+  body.dark-mode .edit-profile-container {
+    background: #2d2d2d;
+    border-color: #444;
+    color: #fff;
+  }
+
+  body.dark-mode .form-group label {
+    color: #ddd;
+  }
+
+  body.dark-mode .form-group input {
+    background-color: #333;
+    border-color: #555;
+    color: #fff;
+  }
+
+  body.dark-mode .form-group input:focus {
+    background-color: #3a3a3a;
+  }
+
+  body.dark-mode .input-hint {
+    color: #aaa;
+  }
+
+  /* ===== RESPONSIVE ADJUSTMENTS ===== */
+  @media (max-width: 768px) {
+    .edit-profile-container {
+      margin: 1.25rem auto;
+      padding: 1.25rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .edit-profile-container {
+      margin: 1rem;
+      padding: 1rem;
+    }
+
+    .edit-profile-header h1 {
+      font-size: 1.25rem;
+    }
+
+    .form-group input {
+      padding: 0.5rem 0.625rem;
+    }
+
+    .save-btn {
+      padding: 0.5rem 1.25rem;
+      width: 100%;
+    }
+  }
+</style>
+
+{% endblock %}

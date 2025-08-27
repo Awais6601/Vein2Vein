@@ -1,0 +1,536 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<!-- Main Container -->
+<div class="donor-registration-container">
+  <main class="donor-registration-box">
+    <!-- Floating Avatar -->
+    <div class="donor-avatar">
+      <img src="https://cdn-icons-png.flaticon.com/512/706/706830.png" alt="Donor Icon">
+    </div>
+
+    <!-- Heading -->
+    <h1 class="donor-heading">
+      <span class="donor-heading-accent">Donor</span> Registration
+    </h1>
+
+    <form action="/signup/donor" method="POST" class="donor-form" onsubmit="return validateForm();">
+      <!-- Section: Personal Information -->
+      <section class="form-section">
+        <h2 class="section-title">Personal Information</h2>
+        <div class="form-grid">
+        <input name="full_name" id="full_name" required placeholder="Full Name *" class="form-input">
+        <input type="email" name="email" id="email" required placeholder="Email Address *" class="form-input">
+        
+        <div class="password-field">
+          <input name="password" id="password" type="password" required placeholder="Password *" class="form-input" minlength="8">
+          <small class="password-hint">Minimum 8 characters</small>
+        </div>
+        
+        <div class="password-field">
+          <input name="confirm_password" id="confirm_password" type="password" required placeholder="Confirm Password *" class="form-input">
+          <small id="password-error" class="error-message"></small>
+        </div>
+          <input name="phone" id="phone" required placeholder="Phone Number *" class="form-input">
+          <input id="dob" name="dob" type="text" required placeholder="Date of Birth *" class="form-input date-input">
+          <select name="gender" id="gender" required class="form-input">
+            <option value="" disabled selected>Gender *</option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+            <option value="Other">Other</option>
+          </select>
+          <input name="city" id="city" required placeholder="City *" class="form-input">
+          <input name="address" id="address" required placeholder="Address *" class="form-input">
+        </div>
+      </section>
+
+      <!-- Section: Medical Info -->
+      <section class="form-section">
+        <h2 class="section-title">Medical Information</h2>
+        <div class="form-grid">
+          <select name="blood_type" id="blood_type" required class="form-input">
+            <option value="" disabled selected>Blood Type *</option>
+            <option value="O+">O+</option>
+            <option value="O-">O-</option>
+            <option value="A+">A+</option>
+            <option value="A-">A-</option>
+            <option value="B+">B+</option>
+            <option value="B-">B-</option>
+            <option value="AB+">AB+</option>
+            <option value="AB-">AB-</option>
+          </select>
+          <input name="weight" id="weight" required placeholder="Weight (kg) *" class="form-input">
+          <input name="height" id="height" required placeholder="Height (feet) *" class="form-input">
+          <input name="last_donation" id="last_donation" type="text" placeholder="Last Blood Donation Date" class="form-input date-input">
+        </div>
+
+        <!-- Medical Conditions -->
+        <label class="checkbox-label">Medical Conditions:</label>
+        <div class="checkbox-grid">
+          {% for condition in ["Hepatitis B", "Hepatitis C", "HIV/AIDS", "Heart Disease", "Insulin-dependent Diabetes",
+          "Uncontrolled Hypertension", "Active Cancer", "None of the above"] %}
+          <label class="checkbox-item">
+            <input type="checkbox" name="conditions" value="{{ condition }}" id="condition-{{ loop.index }}">
+            <span>{{ condition }}</span>
+          </label>
+          {% endfor %}
+        </div>
+        <input name="medications" id="medications" placeholder="Current Medications" class="form-input">
+        <input name="allergies" id="allergies" placeholder="Allergies" class="form-input">
+      </section>
+
+      <!-- Section: Emergency Contact -->
+      <section class="form-section">
+        <h2 class="section-title">Emergency Contact</h2>
+        <div class="emergency-grid">
+          <input name="emg_name" id="emg_name" required placeholder="Name *" class="form-input">
+          <input name="emg_phone" id="emg_phone" required placeholder="Phone *" class="form-input">
+          <input name="emg_relation" id="emg_relation" required placeholder="Relationship *" class="form-input">
+        </div>
+      </section>
+
+      <!-- Section: Availability -->
+      <section class="form-section">
+        <h2 class="section-title">Availability Preferences</h2>
+        <label class="checkbox-label">Available Days:</label>
+        <div class="availability-grid">
+          {% for day in ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday", "Anytime"] %}
+          <label class="checkbox-item">
+            <input type="checkbox" name="available_days" value="{{ day }}" id="day-{{ loop.index }}">
+            <span>{{ day }}</span>
+          </label>
+          {% endfor %}
+        </div>
+
+        <label class="checkbox-label">Preferred Times:</label>
+        <div class="availability-grid">
+          {% for time in ["Morning (6 AM - 12 PM)", "Afternoon (12 PM - 6 PM)", "Evening (6 PM - 12 AM)", "Flexible"] %}
+          <label class="checkbox-item">
+            <input type="checkbox" name="preferred_times" value="{{ time }}" id="time-{{ loop.index }}">
+            <span>{{ time }}</span>
+          </label>
+          {% endfor %}
+        </div>
+      </section>
+
+      <!-- Section: Travel Radius -->
+      <div class="form-section">
+        <label for="travel_radius" class="form-label">Travel Radius (km)</label>
+        <select name="travel_radius" id="travel_radius" class="form-input">
+          <option value="5">5 km</option>
+          <option value="10">10 km</option>
+          <option value="15">15 km</option>
+          <option value="20">20 km</option>
+          <option value="25">25 km</option>
+          <option value="30">30 km</option>
+          <option value="city">Anywhere in city</option>
+        </select>
+      </div>
+
+      <!-- Terms and Submit -->
+      <div class="terms-section">
+        <label class="terms-agreement">
+          <input type="checkbox" name="terms" id="terms" required>
+          <span>I agree to the Terms and Conditions and Privacy Policy. I understand that my medical information will be
+            kept confidential and used only for blood donation matching purposes.</span>
+        </label>
+
+        <button type="submit" class="submit-button">
+          Register as a Donor
+        </button>
+      </div>
+    </form>
+  </main>
+</div>
+
+<style>
+  /* Add these new styles */
+  .password-field {
+    position: relative;
+  }
+
+  .password-hint {
+    display: block;
+    font-size: 0.75rem;
+    color: #666;
+    margin-top: 0.25rem;
+  }
+
+  .dark-mode .password-hint {
+    color: #aaa;
+  }
+
+  .error-message {
+    display: block;
+    color: #e74c3c;
+    font-size: 0.75rem;
+    margin-top: 0.25rem;
+    height: 1rem;
+  }
+
+  .input-error {
+    border-color: #e74c3c !important;
+  }
+
+  .dark-mode .error-message {
+    color: #ff6b6b;
+  }
+  /* ===== BASE STYLES ===== */
+  .donor-registration-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 1rem;
+    background-color: #f5f5f5;
+  }
+
+  .dark-mode .donor-registration-container {
+    background-color: #121212;
+  }
+
+  .donor-registration-box {
+    width: 100%;
+    max-width: 62.5rem;
+    background: #ffffff;
+    border-radius: 1rem;
+    box-shadow: 0 0.625rem 1.875rem rgba(0, 0, 0, 0.1);
+    padding: 4.375rem 1.875rem 1.875rem;
+    position: relative;
+    margin: 1.25rem 0;
+  }
+
+  .dark-mode .donor-registration-box {
+    background: #1a1a1a;
+    box-shadow: 0 0.625rem 1.875rem rgba(0, 0, 0, 0.3);
+  }
+
+  /* Avatar */
+  .donor-avatar {
+    position: absolute;
+    top: -3.125rem;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .donor-avatar img {
+    width: 6.25rem;
+    height: 6.25rem;
+    border-radius: 50%;
+    border: 0.3125rem solid white;
+    box-shadow: 0 0.3125rem 0.9375rem rgba(0, 0, 0, 0.2);
+  }
+
+  .dark-mode .donor-avatar img {
+    border-color: #2d2d2d;
+  }
+
+  /* Heading */
+  .donor-heading {
+    font-size: 2rem;
+    font-weight: 800;
+    text-align: center;
+    color: #000000;
+    margin-bottom: 1.875rem;
+  }
+
+  .dark-mode .donor-heading {
+    color: #ffffff;
+  }
+
+  .donor-heading-accent {
+    color: #e60000;
+  }
+
+  /* Form Sections */
+  .form-section {
+    margin-bottom: 1.875rem;
+  }
+
+  .section-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 0.9375rem;
+    color: #333333;
+  }
+
+  .dark-mode .section-title {
+    color: #f0f0f0;
+  }
+
+  /* Form Grids */
+  .form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(18.75rem, 1fr));
+    gap: 0.9375rem;
+    margin-bottom: 0.9375rem;
+  }
+
+  .emergency-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(12.5rem, 1fr));
+    gap: 0.9375rem;
+  }
+
+  /* Form Inputs */
+  .form-input {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #cccccc;
+    border-radius: 0.5rem;
+    background: #f5f5f5;
+    font-size: 1rem;
+    transition: all 0.2s ease;
+  }
+
+  .dark-mode .form-input {
+    background: #2d2d2d;
+    border-color: #444444;
+    color: #ffffff;
+  }
+
+  .form-input:focus {
+    outline: none;
+    border-color: #e60000;
+    box-shadow: 0 0 0 0.125rem rgba(230, 0, 0, 0.2);
+  }
+
+  .form-input::placeholder {
+    color: #999;
+  }
+
+  .dark-mode .form-input::placeholder {
+    color: #777;
+  }
+
+  /* Checkbox Grids */
+  .checkbox-label {
+    display: block;
+    font-weight: 500;
+    margin-bottom: 0.625rem;
+    color: #333333;
+  }
+
+  .dark-mode .checkbox-label {
+    color: #f0f0f0;
+  }
+
+  .checkbox-grid, .availability-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(12.5rem, 1fr));
+    gap: 0.625rem;
+    margin-bottom: 0.9375rem;
+  }
+
+  .checkbox-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+  }
+
+  .checkbox-item input[type="checkbox"] {
+    accent-color: #e60000;
+    width: 1rem;
+    height: 1rem;
+  }
+
+  /* Terms Section */
+  .terms-section {
+    margin-top: 1.875rem;
+  }
+
+  .terms-agreement {
+    display: flex;
+    gap: 0.625rem;
+    font-size: 0.875rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .terms-agreement input[type="checkbox"] {
+    accent-color: #e60000;
+    flex-shrink: 0;
+    margin-top: 0.1875rem;
+  }
+
+  /* Submit Button */
+  .submit-button {
+    width: 100%;
+    max-width: 18.75rem;
+    display: block;
+    margin: 0 auto;
+    padding: 0.9375rem;
+    background: #e60000;
+    color: white;
+    border: none;
+    border-radius: 0.5rem;
+    font-size: 1.125rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .submit-button:hover {
+    background: #c50000;
+    transform: translateY(-0.125rem);
+    box-shadow: 0 0.3125rem 0.9375rem rgba(230, 0, 0, 0.3);
+  }
+
+  .submit-button:active {
+    transform: translateY(0);
+  }
+
+  /* ===== RESPONSIVE ADJUSTMENTS ===== */
+  @media (max-width: 768px) {
+    .donor-registration-box {
+      padding: 3.75rem 1.25rem 1.5625rem;
+    }
+
+    .donor-heading {
+      font-size: 1.75rem;
+      margin-bottom: 1.5625rem;
+    }
+
+    .form-grid, .emergency-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .checkbox-grid, .availability-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .donor-registration-container {
+      padding: 0.625rem;
+    }
+
+    .donor-registration-box {
+      padding: 3.125rem 0.9375rem 1.25rem;
+    }
+
+    .donor-avatar img {
+      width: 5rem;
+      height: 5rem;
+    }
+
+    .donor-heading {
+      font-size: 1.5rem;
+    }
+
+    .checkbox-grid, .availability-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .submit-button {
+      max-width: 100%;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .donor-heading {
+      font-size: 1.375rem;
+    }
+
+    .section-title {
+      font-size: 1.125rem;
+    }
+  }
+</style>
+
+<script>
+  // Date input handling
+  document.querySelectorAll('.date-input').forEach(input => {
+    input.addEventListener('focus', function() {
+      this.type = 'date';
+    });
+    
+    input.addEventListener('blur', function() {
+      if(!this.value) this.type = 'text';
+    });
+  });
+
+  // Password confirmation validation
+  document.getElementById('confirm_password').addEventListener('input', function() {
+    const password = document.getElementById('password').value;
+    if (this.value !== password) {
+      this.setCustomValidity("Passwords do not match");
+    } else {
+      this.setCustomValidity("");
+    }
+  });
+  function validatePasswords() {
+    const password = document.getElementById('password').value;
+    const confirmPassword = document.getElementById('confirm_password').value;
+    const errorElement = document.getElementById('password-error');
+    
+    if (password !== confirmPassword) {
+      errorElement.textContent = "Passwords do not match";
+      document.getElementById('confirm_password').classList.add('input-error');
+      return false;
+    } else {
+      errorElement.textContent = "";
+      document.getElementById('confirm_password').classList.remove('input-error');
+      return true;
+    }
+  }
+
+  // Real-time password matching feedback
+  document.getElementById('confirm_password').addEventListener('input', validatePasswords);
+  document.getElementById('password').addEventListener('input', validatePasswords);
+
+  // Form validation
+  function validateForm() {
+    // Validate age first
+    if (!validateAge()) {
+      return false;
+    }
+    
+    // Validate password match
+    if (!validatePasswords()) {
+      // Scroll to password fields if error exists
+      document.getElementById('password').scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return false;
+    }
+    
+    // Validate weight requirement
+    const weight = document.getElementById('weight').value;
+    if (weight < 50) {
+      alert("Minimum weight requirement is 50kg for blood donation.");
+      return false;
+    }
+    
+    return true;
+  }
+
+  // Age validation
+  function validateAge() {
+    const dobInput = document.getElementById('dob').value;
+    if (!dobInput) return true; // Let required handle empty
+
+    const dob = new Date(dobInput);
+    const today = new Date();
+    const age = today.getFullYear() - dob.getFullYear();
+    const m = today.getMonth() - dob.getMonth();
+
+    const isOldEnough = (m > 0 || (m === 0 && today.getDate() >= dob.getDate()))
+      ? age
+      : age - 1;
+
+    if (isOldEnough < 18) {
+      alert("You must be at least 18 years old to register as a donor.");
+      return false;
+    }
+
+    // Validate weight requirement
+    const weight = document.getElementById('weight').value;
+    if (weight < 50) {
+      alert("Minimum weight requirement is 50kg for blood donation.");
+      return false;
+    }
+
+    return true;
+  }
+</script>
+
+{% endblock %}

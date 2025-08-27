@@ -1,0 +1,423 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<main class="admin-panel">
+  <!-- Header -->
+  <div class="admin-header">
+    <h1 class="admin-title">Admin Panel</h1>
+  </div>
+
+  <!-- Navigation Tabs -->
+  <div class="tab-container">
+    <button class="tab-button active" onclick="showSection('approved-donors')">Approved Donors</button>
+    <button class="tab-button" onclick="showSection('pending-donors')">Pending Donors</button>
+    <button class="tab-button" onclick="showSection('approved-finders')">Approved Finders</button>
+    <button class="tab-button" onclick="showSection('pending-finders')">Pending Finders</button>
+  </div>
+
+  <!-- Approved Donors Section -->
+  <section id="approved-donors" class="content-section active">
+    <h2 class="section-heading">Approved Donors</h2>
+    {% if donors_approved %}
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>City</th>
+            <th>Blood Type</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for donor in donors_approved %}
+          <tr>
+            <td>{{ donor.full_name }}</td>
+            <td>{{ donor.email }}</td>
+            <td>{{ donor.city }}</td>
+            <td>{{ donor.blood_type }}</td>
+            <td class="status-approved">Approved</td>
+            <td class="action-buttons">
+              <a href="/admin/view/donor/{{ donor.email }}" class="action-btn view-btn">View</a>
+              <a href="/admin/revoke/donor/{{ donor.email }}" class="action-btn revoke-btn">Revoke</a>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <p class="no-results">No approved donors found.</p>
+    {% endif %}
+  </section>
+
+  <!-- Pending Donors Section -->
+  <section id="pending-donors" class="content-section">
+    <h2 class="section-heading">Pending Donors</h2>
+    {% if donors_pending %}
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>City</th>
+            <th>Blood Type</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for donor in donors_pending %}
+          <tr>
+            <td>{{ donor.full_name }}</td>
+            <td>{{ donor.email }}</td>
+            <td>{{ donor.city }}</td>
+            <td>{{ donor.blood_type }}</td>
+            <td class="status-pending">Pending</td>
+            <td class="action-buttons">
+              <a href="/admin/view/donor/{{ donor.email }}" class="action-btn view-btn">View</a>
+              <a href="/admin/approve/donor/{{ donor.email }}" class="action-btn approve-btn">Approve</a>
+              <a href="/admin/reject/donor/{{ donor.email }}" class="action-btn reject-btn">Reject</a>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <p class="no-results">No pending donors found.</p>
+    {% endif %}
+  </section>
+
+  <!-- Approved Finders Section -->
+  <section id="approved-finders" class="content-section">
+    <h2 class="section-heading">Approved Finders</h2>
+    {% if finders_approved %}
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>City</th>
+            <th>Requests</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for finder in finders_approved %}
+          <tr>
+            <td>{{ finder.full_name }}</td>
+            <td>{{ finder.email }}</td>
+            <td>{{ finder.city }}</td>
+            <td>{{ finder.requests|length if finder.requests else 0 }}</td>
+            <td class="status-approved">Approved</td>
+            <td class="action-buttons">
+              <a href="/admin/view/finder/{{ finder.email }}" class="action-btn view-btn">View</a>
+              <a href="/admin/revoke/finder/{{ finder.email }}" class="action-btn revoke-btn">Revoke</a>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <p class="no-results">No approved finders found.</p>
+    {% endif %}
+  </section>
+
+  <!-- Pending Finders Section -->
+  <section id="pending-finders" class="content-section">
+    <h2 class="section-heading">Pending Finders</h2>
+    {% if finders_pending %}
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>City</th>
+            <th>Requests</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for finder in finders_pending %}
+          <tr>
+            <td>{{ finder.full_name }}</td>
+            <td>{{ finder.email }}</td>
+            <td>{{ finder.city }}</td>
+            <td>{{ finder.requests|length if finder.requests else 0 }}</td>
+            <td class="status-pending">Pending</td>
+            <td class="action-buttons">
+              <a href="/admin/view/finder/{{ finder.email }}" class="action-btn view-btn">View</a>
+              <a href="/admin/approve/finder/{{ finder.email }}" class="action-btn approve-btn">Approve</a>
+              <a href="/admin/reject/finder/{{ finder.email }}" class="action-btn reject-btn">Reject</a>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <p class="no-results">No pending finders found.</p>
+    {% endif %}
+  </section>
+</main>
+
+<style>
+  /* ===== BASE STYLES ===== */
+  .admin-panel {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+
+  /* ===== HEADER STYLES ===== */
+  .admin-header {
+    margin-bottom: 30px;
+  }
+
+  .admin-title {
+    font-size: 2rem;
+    color: #d32f2f;
+    margin: 0;
+  }
+
+  /* ===== TAB STYLES ===== */
+  .tab-container {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 25px;
+    flex-wrap: wrap;
+  }
+
+  .tab-button {
+    padding: 10px 20px;
+    background: #2d3748;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 500;
+  }
+
+  .tab-button:hover {
+    background: #4a5568;
+  }
+
+  .tab-button.active {
+    background: #d32f2f;
+  }
+
+  /* ===== CONTENT SECTION STYLES ===== */
+  .content-section {
+    display: none;
+  }
+
+  .content-section.active {
+    display: block;
+  }
+
+  .section-heading {
+    font-size: 1.5rem;
+    color: #d32f2f;
+    margin-bottom: 20px;
+  }
+
+  /* ===== TABLE STYLES ===== */
+  .table-wrapper {
+    overflow-x: auto;
+    margin-bottom: 30px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #2d3748;
+    color: white;
+  }
+
+  th, td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #4a5568;
+  }
+
+  th {
+    background: #1a202c;
+    font-weight: 600;
+    position: sticky;
+    top: 0;
+  }
+
+  tr:hover {
+    background: #4a5568;
+  }
+
+  /* ===== STATUS STYLES ===== */
+  .status-approved {
+    color: #48bb78;
+    font-weight: 500;
+  }
+
+  .status-pending {
+    color: #ecc94b;
+    font-weight: 500;
+  }
+
+  /* ===== ACTION BUTTONS ===== */
+  .action-buttons {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .action-btn {
+    padding: 6px 12px;
+    border-radius: 4px;
+    color: white;
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+  }
+
+  .view-btn {
+    background: #3182ce;
+  }
+
+  .view-btn:hover {
+    background: #2c5282;
+  }
+
+  .approve-btn {
+    background: #48bb78;
+  }
+
+  .approve-btn:hover {
+    background: #2f855a;
+  }
+
+  .reject-btn, .revoke-btn {
+    background: #e53e3e;
+  }
+
+  .reject-btn:hover, .revoke-btn:hover {
+    background: #c53030;
+  }
+
+  /* ===== NO RESULTS STYLE ===== */
+  .no-results {
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 6px;
+    color: #6c757d;
+    text-align: center;
+  }
+
+  .dark-mode .no-results {
+    background: #2d3748;
+    color: #a0aec0;
+  }
+
+  /* ===== DARK MODE STYLES ===== */
+  .dark-mode .admin-panel {
+    background: #1a202c;
+  }
+
+  .dark-mode .table-wrapper {
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+  }
+
+  .dark-mode table {
+    background: #2d3748;
+  }
+
+  .dark-mode th {
+    background: #1a202c;
+  }
+
+  .dark-mode tr:hover {
+    background: #4a5568;
+  }
+
+  /* ===== RESPONSIVE ADJUSTMENTS ===== */
+  @media (max-width: 768px) {
+    .admin-title {
+      font-size: 1.8rem;
+    }
+
+    .tab-container {
+      flex-direction: column;
+    }
+
+    .tab-button {
+      width: 100%;
+    }
+
+    .section-heading {
+      font-size: 1.3rem;
+    }
+
+    th, td {
+      padding: 10px;
+      font-size: 0.9rem;
+    }
+
+    .action-buttons {
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .action-btn {
+      width: 100%;
+      text-align: center;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .admin-panel {
+      padding: 15px;
+    }
+
+    .admin-title {
+      font-size: 1.5rem;
+    }
+
+    th, td {
+      padding: 8px;
+      font-size: 0.85rem;
+    }
+  }
+</style>
+
+<script>
+  function showSection(sectionId) {
+    // Hide all sections
+    document.querySelectorAll('.content-section').forEach(section => {
+      section.classList.remove('active');
+    });
+    
+    // Show selected section
+    document.getElementById(sectionId).classList.add('active');
+    
+    // Update active tab
+    document.querySelectorAll('.tab-button').forEach(btn => {
+      btn.classList.remove('active');
+    });
+    event.currentTarget.classList.add('active');
+  }
+</script>
+
+{% endblock %}

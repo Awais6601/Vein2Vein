@@ -1,0 +1,179 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<main class="request-form-container">
+  <h1 class="form-title">Create New Blood Request</h1>
+
+  <form method="POST" class="blood-request-form">
+    <input name="email" type="hidden" value="{{ finder.email }}">
+
+    <div class="form-group">
+      <label>Blood Type *</label>
+      <select name="blood_type" required>
+        <option disabled selected>Select Blood Type</option>
+        <option>A+</option>
+        <option>A-</option>
+        <option>B+</option>
+        <option>B-</option>
+        <option>O+</option>
+        <option>O-</option>
+        <option>AB+</option>
+        <option>AB-</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>Location *</label>
+      <input type="text" name="location" required placeholder="e.g. Lahore" />
+    </div>
+
+    <div class="form-group">
+      <label>Urgency *</label>
+      <select name="urgency" required>
+        <option disabled selected>Select Urgency</option>
+        <option>High</option>
+        <option>Medium</option>
+        <option>Low</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>Contact Number *</label>
+      <input type="text" name="contact" required placeholder="03xx-xxxxxxx" />
+    </div>
+
+    <div class="form-group">
+      <label>Request Date *</label>
+      <input type="date" name="date" required />
+    </div>
+
+    <button type="submit" class="submit-button">
+      Submit Request
+    </button>
+  </form>
+</main>
+
+<style>
+  /* ===== BASE STYLES ===== */
+  .request-form-container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+
+  .form-title {
+    font-size: 1.8rem;
+    color: rgb(213, 4, 4);
+    margin-bottom: 30px;
+    text-align: center;
+    font-weight: 700;
+  }
+
+  /* ===== FORM STYLES ===== */
+  .blood-request-form {
+    background: #2d3748;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+
+  .dark-mode .blood-request-form {
+    background: #1a202c;
+  }
+
+  .form-group {
+    margin-bottom: 20px;
+  }
+
+  .form-group label {
+    display: block;
+    color: white;
+    margin-bottom: 8px;
+    font-weight: 500;
+  }
+
+  .dark-mode .form-group label {
+    color: #e2e8f0;
+  }
+
+  .form-group input,
+  .form-group select {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    font-size: 1rem;
+    background: white;
+    color: #1a202c;
+  }
+
+  .dark-mode .form-group input,
+  .dark-mode .form-group select {
+    background: #2d3748;
+    border-color: #4a5568;
+    color: white;
+  }
+
+  .form-group input:focus,
+  .form-group select:focus {
+    outline: none;
+    border-color: #4299e1;
+    box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.2);
+  }
+
+  /* ===== SUBMIT BUTTON ===== */
+  .submit-button {
+    width: 100%;
+    padding: 14px;
+    background: #e40000;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 10px;
+  }
+
+  .submit-button:hover {
+    background: rgb(211, 4, 4);
+    transform: translateY(-2px);
+  }
+
+  /* ===== RESPONSIVE ADJUSTMENTS ===== */
+  @media (max-width: 768px) {
+    .request-form-container {
+      padding: 15px;
+    }
+
+    .form-title {
+      font-size: 1.5rem;
+      margin-bottom: 20px;
+    }
+
+    .blood-request-form {
+      padding: 20px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .form-title {
+      font-size: 1.3rem;
+    }
+
+    .form-group input,
+    .form-group select {
+      padding: 10px;
+      font-size: 0.9rem;
+    }
+
+    .submit-button {
+      padding: 12px;
+      font-size: 1rem;
+    }
+  }
+</style>
+
+{% endblock %}

@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<main style="padding: 30px;">
+  <h2>Pending Donors</h2>
+  <table border="1" cellpadding="10">
+    <tr><th>Name</th><th>Email</th><th>City</th><th>Actions</th></tr>
+    {% for d in donors %}
+    <tr>
+      <td>{{ d.full_name }}</td>
+      <td>{{ d.email }}</td>
+      <td>{{ d.city }}</td>
+      <td>
+        <a href="/admin/approve/donor/{{ d.email }}">Approve</a> |
+        <a href="/admin/reject/donor/{{ d.email }}">Reject</a>
+      </td>
+    </tr>
+    {% endfor %}
+  </table>
+
+  <h2 style="margin-top: 40px;">Pending Finders</h2>
+  <table border="1" cellpadding="10">
+    <tr><th>Name</th><th>Email</th><th>City</th><th>Actions</th></tr>
+    {% for f in finders %}
+    <tr>
+      <td>{{ f.full_name }}</td>
+      <td>{{ f.email }}</td>
+      <td>{{ f.city }}</td>
+      <td>
+        <a href="/admin/approve/finder/{{ f.email }}">Approve</a> |
+        <a href="/admin/reject/finder/{{ f.email }}">Reject</a>
+      </td>
+    </tr>
+    {% endfor %}
+  </table>
+</main>
+
+{% endblock %}

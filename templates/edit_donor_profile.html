@@ -1,0 +1,231 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="edit-profile-container">
+  <div class="edit-profile-header">
+    <h1>Edit Your Profile</h1>
+    <p>Update your donor information</p>
+  </div>
+
+  <form action="{{ url_for('edit_donor_profile') }}?email={{ donor.email }}" method="POST">
+    <div class="form-section">
+      <h2>Personal Information</h2>
+      
+      <div class="form-group">
+        <label for="full_name">Full Name *</label>
+        <input type="text" name="full_name" value="{{ donor.full_name }}" id="full_name" required>
+      </div>
+
+      <div class="form-group">
+        <label for="city">City *</label>
+        <input type="text" name="city" value="{{ donor.city }}" id="city" required>
+      </div>
+
+      <div class="form-group">
+        <label for="phone">Phone *</label>
+        <input type="tel" name="phone" value="{{ donor.phone }}" id="phone" required>
+        <small class="input-hint">Format: 03xx-xxxxxxx</small>
+      </div>
+
+      <div class="form-group">
+        <label for="address">Address *</label>
+        <input type="text" name="address" value="{{ donor.address }}" id="address" required>
+      </div>
+    </div>
+
+    <div class="form-section">
+      <h2>Health Information</h2>
+      
+      <div class="form-group">
+        <label for="weight">Weight (kg) *</label>
+        <input type="number" name="weight" value="{{ donor.weight }}" id="weight" required>
+      </div>
+
+      <div class="form-group">
+        <label for="height">Height (feet) *</label>
+        <input name="height" value="{{ donor.height }}" id="height" required>
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" class="save-btn">Save Changes</button>
+    </div>
+  </form>
+</div>
+
+<style>
+  /* ===== BASE STYLES ===== */
+  .edit-profile-container {
+    max-width: 32rem;
+    margin: 2rem auto;
+    padding: 1.5rem;
+    background: #fff;
+    border-radius: 0.5rem;
+    border: 1px solid #e0e0e0;
+    box-shadow: 0 0.125rem 0.5rem rgba(0, 0, 0, 0.1);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+
+  .edit-profile-header {
+    text-align: center;
+    margin-bottom: 1.5rem;
+  }
+
+  .edit-profile-header h1 {
+    color: #d10000;
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+  }
+
+  .edit-profile-header p {
+    color: #666;
+    font-size: 0.875rem;
+    margin: 0;
+  }
+
+  .form-section {
+    margin-bottom: 1.25rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #eee;
+  }
+
+  .form-section h2 {
+    color: #d10000;
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+  }
+
+  .form-group {
+    margin-bottom: 1rem;
+  }
+
+  .form-group label {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #444;
+    margin-bottom: 0.5rem;
+  }
+
+  .form-group input {
+    width: 100%;
+    padding: 0.75rem;
+    font-size: 0.875rem;
+    border: 1px solid #ddd;
+    border-radius: 0.25rem;
+    background-color: #f9f9f9;
+    transition: all 0.2s ease;
+  }
+
+  .form-group input:focus {
+    border-color: #d10000;
+    outline: none;
+    background-color: #fff;
+    box-shadow: 0 0 0 0.125rem rgba(209, 0, 0, 0.1);
+  }
+
+  .input-hint {
+    display: block;
+    margin-top: 0.25rem;
+    font-size: 0.75rem;
+    color: #666;
+  }
+
+  .form-actions {
+    margin-top: 1.5rem;
+    text-align: center;
+  }
+
+  .save-btn {
+    background-color: #d10000;
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    font-weight: 500;
+    border-radius: 0.25rem;
+    cursor: pointer;
+    width: 100%;
+    transition: all 0.2s ease;
+  }
+
+  .save-btn:hover {
+    background-color: #b50000;
+    transform: translateY(-0.0625rem);
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.1);
+  }
+
+  .save-btn:active {
+    transform: translateY(0);
+  }
+
+  /* ===== DARK MODE STYLES ===== */
+  body.dark-mode .edit-profile-container {
+    background: #2d2d2d;
+    border-color: #444;
+  }
+
+  body.dark-mode .form-group label {
+    color: #ddd;
+  }
+
+  body.dark-mode .form-group input {
+    background-color: #333;
+    border-color: #555;
+    color: #fff;
+  }
+
+  body.dark-mode .form-group input:focus {
+    background-color: #3a3a3a;
+  }
+
+  body.dark-mode .edit-profile-header p {
+    color: #bbb;
+  }
+
+  body.dark-mode .form-section {
+    border-bottom-color: #444;
+  }
+
+  body.dark-mode .input-hint {
+    color: #999;
+  }
+
+  /* ===== RESPONSIVE ADJUSTMENTS ===== */
+  @media (max-width: 640px) {
+    .edit-profile-container {
+      margin: 1.25rem auto;
+      padding: 1.25rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .edit-profile-container {
+      margin: 1rem;
+      padding: 1rem;
+    }
+
+    .edit-profile-header h1 {
+      font-size: 1.25rem;
+    }
+
+    .save-btn {
+      padding: 0.75rem;
+    }
+  }
+
+  @media (max-width: 375px) {
+    .edit-profile-container {
+      margin: 0.75rem;
+      padding: 0.75rem;
+    }
+
+    .form-group input {
+      padding: 0.625rem;
+    }
+  }
+</style>
+
+{% endblock %}

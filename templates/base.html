@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en" class="" id="htmlRoot">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vein2Vein</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-sA+qCkzD6Zo4PAi6tJAfrrPmtbVmUym+So2zMrrWySU=" crossorigin="" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <style>
+    /* ===== BASE STYLES ===== */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      transition: background-color 0.3s, color 0.3s;
+      line-height: 1.5;
+    }
+
+    body.light-mode {
+      background-color: #f8f9fa;
+      color: #222222;
+    }
+
+    body.dark-mode {
+      background-color: #121212;
+      color: #f0f0f0;
+    }
+
+    /* ===== HEADER ===== */
+    header {
+      position: relative;
+      top: 0;
+      z-index: 1000;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 5%;
+      background: #ffffff;
+      box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+    }
+
+    .dark-mode header {
+      background: #1a1a1a;
+      box-shadow: 0 2px 15px rgba(0, 0, 0, 0.3);
+    }
+
+    .logo {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: #e60000;
+      display: flex;
+      align-items: center;
+      transition: all 0.3s ease;
+    }
+
+    .logo i {
+      margin-right: 10px;
+      font-size: 1.2em;
+    }
+
+    /* Header shrink effect */
+    .header-shrink {
+      padding: 10px 5% !important;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .header-shrink .logo {
+      font-size: 1.3rem;
+    }
+
+    /* ===== NAVIGATION ===== */
+    nav {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    nav a,
+    nav button {
+      padding: 10px 18px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.95rem;
+      transition: all 0.3s ease;
+      white-space: nowrap;
+    }
+
+    /* Home button */
+    .home-btn {
+      background: linear-gradient(135deg, #e60000, #c50000);
+      color: white;
+      box-shadow: 0 2px 5px rgba(230, 0, 0, 0.2);
+    }
+
+    .home-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(230, 0, 0, 0.3);
+    }
+
+    /* Login button */
+    .login-btn {
+      background: linear-gradient(135deg, #0066cc, #004d99);
+      color: white;
+      box-shadow: 0 2px 5px rgba(0, 102, 204, 0.2);
+    }
+
+    .login-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 102, 204, 0.3);
+    }
+
+    /* Register button & dropdown */
+    .register-btn {
+      background: linear-gradient(135deg, #7b00cc, #5a0099);
+      color: white;
+      border: none;
+      cursor: pointer;
+      position: relative;
+      box-shadow: 0 2px 5px rgba(123, 0, 204, 0.2);
+    }
+
+    .register-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(123, 0, 204, 0.3);
+    }
+
+    .dropdown-container {
+      position: relative;
+    }
+
+    .dropdown-menu {
+      position: absolute;
+      right: 0;
+      top: 100%;
+      background: #ffffff;
+      min-width: 180px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+      border-radius: 8px;
+      overflow: hidden;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+      z-index: 100;
+      margin-top: 5px;
+    }
+
+    .dropdown-container:hover .dropdown-menu {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .dropdown-menu a {
+      display: block;
+      padding: 12px 16px;
+      color: #333;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+
+    .dropdown-menu a:hover {
+      background: #f5f5f5;
+    }
+
+    /* Dark mode dropdown */
+    .dark-mode .dropdown-menu {
+      background: #2d2d2d;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .dark-mode .dropdown-menu a {
+      color: #f0f0f0;
+    }
+
+    .dark-mode .dropdown-menu a:hover {
+      background: #3d3d3d;
+    }
+
+    /* Theme toggle button */
+    .theme-toggle {
+      margin-left: 10px;
+      background: none;
+      border: none;
+      color: #ffcc00;
+      font-size: 1.4rem;
+      cursor: pointer;
+      transition: transform 0.3s;
+      padding: 8px;
+    }
+
+    .theme-toggle:hover {
+      transform: scale(1.1) rotate(15deg);
+    }
+
+    /* ===== MAIN CONTENT ===== */
+    main {
+      flex: 1;
+      padding: 2rem 5%;
+    }
+
+    /* ===== FOOTER ===== */
+    footer {
+      padding: 2rem 5%;
+      border-top: 1px solid #e0e0e0;
+      background: #ffffff;
+    }
+
+    .dark-mode footer {
+      background: #1a1a1a;
+      border-color: #333;
+    }
+
+    .footer-content {
+      display: flex;
+      flex-direction: column;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .footer-top {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .footer-brand {
+      flex: 1;
+    }
+
+    .footer-brand h5 {
+      font-size: 1.2rem;
+      color: #e60000;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+    }
+
+    .footer-brand h5 i {
+      margin-right: 10px;
+    }
+
+    .footer-brand p {
+      color: #666;
+      line-height: 1.6;
+      max-width: 500px;
+    }
+
+    .footer-contact {
+      flex: 1;
+      text-align: left;
+    }
+
+    .footer-contact strong {
+      display: block;
+      margin-bottom: 0.8rem;
+      color: #333;
+      font-size: 1.1rem;
+    }
+
+    .footer-contact span {
+      display: block;
+      color: #666;
+      line-height: 1.6;
+      margin-bottom: 0.5rem;
+    }
+
+    .footer-bottom {
+      text-align: center;
+      color: #999;
+      font-size: 0.9rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid #e0e0e0;
+    }
+
+    /* Dark mode footer text */
+    .dark-mode .footer-brand p,
+    .dark-mode .footer-contact span,
+    .dark-mode .footer-bottom {
+      color: #aaa;
+    }
+
+    .dark-mode .footer-contact strong {
+      color: #f0f0f0;
+    }
+
+    .dark-mode .footer-bottom {
+      border-color: #333;
+    }
+
+    /* ===== MEDIA QUERIES ===== */
+    /* Tablet (768px - 1024px) */
+    @media (min-width: 768px) {
+      .footer-top {
+        flex-direction: row;
+        justify-content: space-between;
+      }
+
+      .footer-contact {
+        text-align: right;
+      }
+    }
+
+    /* Large Mobile (576px - 767px) */
+    @media (max-width: 767px) {
+      header {
+        padding: 15px;
+        flex-direction: column;
+        gap: 15px;
+      }
+
+      nav {
+        width: 100%;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+
+      .logo {
+        margin-bottom: 0;
+      }
+
+      .dropdown-menu {
+        width: 100%;
+      }
+
+      .theme-toggle {
+        margin-left: auto;
+      }
+    }
+
+    /* Small Mobile (480px - 575px) */
+    @media (max-width: 575px) {
+
+      nav a,
+      nav button {
+        padding: 8px 12px;
+        font-size: 0.9rem;
+      }
+
+      .logo {
+        font-size: 1.3rem;
+      }
+
+      .header-shrink .logo {
+        font-size: 1.2rem;
+      }
+    }
+
+    /* Extra Small Mobile (<480px) */
+    @media (max-width: 480px) {
+      nav {
+        flex-direction: column;
+        width: 100%;
+      }
+
+      nav a,
+      nav button {
+        width: 100%;
+        text-align: center;
+      }
+
+      .dropdown-container {
+        width: 100%;
+      }
+
+      .theme-toggle {
+        margin: 10px auto 0;
+      }
+
+      main {
+        padding: 1.5rem;
+      }
+
+      footer {
+        padding: 1.5rem;
+      }
+    }
+  </style>
+</head>
+
+<body id="bodyRoot" class="light-mode">
+  <!-- Header -->
+  <header id="mainHeader">
+    <!-- Logo -->
+    <a href="/" class="logo">
+      <i class="fas fa-heartbeat"></i> Vein2Vein
+    </a>
+
+
+
+    <!-- Navigation -->
+    <nav>
+      <a href="/" class="home-btn">Home</a>
+
+      {% if session.get("donor_logged_in") or session.get("finder_logged_in") or session.get("admin_logged_in") %}
+      <a href="/logout" class="login-btn">Logout</a>
+      {% else %}
+      <a href="/login" class="login-btn">Login</a>
+      <div class="dropdown-container">
+        <button class="register-btn" id="registerButton">Register</button>
+        <div class="dropdown-menu" id="dropdownMenu">
+          <a href="/signup/donor">As Donor</a>
+          <a href="/signup/finder">As Finder</a>
+        </div>
+      </div>
+      {% endif %}
+
+      <button onclick="toggleTheme()" class="theme-toggle" title="Toggle Dark/Light Mode">
+        <i class="fas fa-moon"></i>
+      </button>
+    </nav>
+
+  </header>
+
+  <!-- Main Content -->
+  <main>{% block content %}{% endblock %}</main>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-content">
+      <div class="footer-top">
+        <div class="footer-brand">
+          <h5>
+            <a href="/" style="color: #e60000; text-decoration: none;">
+              <i class="fas fa-heartbeat"></i> Vein2Vein
+            </a>
+          </h5>
+
+
+          <p>
+            Connecting blood donors with those in need across Pakistan.<br />Together,
+            we save lives.
+          </p>
+        </div>
+        <div class="footer-contact">
+          <strong>Emergency Contact</strong>
+          <span>0312 4269293 (Emergency)</span>
+          <span>emergency@vein2vein.pk</span>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        © 2025 Vein2Vein. All rights reserved. | Saving lives, one donation at a
+        time.
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-nPlqLhWkA7AypkRr7p/NqVJg9Qq6rXQ0R5crHnEjt3U=" crossorigin=""></script>
+
+  <script>
+    window.onload = function () {
+      const savedTheme = localStorage.getItem("vein2vein_theme") || "light";
+      applyTheme(savedTheme);
+
+      // Header shrink effect on scroll
+      let lastScroll = 0;
+      const header = document.getElementById('mainHeader');
+
+      window.addEventListener('scroll', function () {
+        const currentScroll = window.pageYOffset;
+
+        if (currentScroll <= 0) {
+          header.classList.remove('header-shrink');
+          return;
+        }
+
+        if (currentScroll > lastScroll && !header.classList.contains('header-shrink')) {
+          // Scrolling down
+          header.classList.add('header-shrink');
+        } else if (currentScroll < lastScroll && header.classList.contains('header-shrink')) {
+          // Scrolling up
+          header.classList.remove('header-shrink');
+        }
+
+        lastScroll = currentScroll;
+      });
+
+      // Improved dropdown behavior with JavaScript
+      const dropdownContainer = document.querySelector('.dropdown-container');
+      const dropdownMenu = document.querySelector('.dropdown-menu');
+      let dropdownTimeout;
+
+      dropdownContainer.addEventListener('mouseenter', function () {
+        clearTimeout(dropdownTimeout);
+        dropdownMenu.style.opacity = '1';
+        dropdownMenu.style.visibility = 'visible';
+      });
+
+      dropdownContainer.addEventListener('mouseleave', function () {
+        dropdownTimeout = setTimeout(function () {
+          if (!dropdownMenu.matches(':hover')) {
+            dropdownMenu.style.opacity = '0';
+            dropdownMenu.style.visibility = 'hidden';
+          }
+        }, 200);
+      });
+
+      dropdownMenu.addEventListener('mouseenter', function () {
+        clearTimeout(dropdownTimeout);
+      });
+
+      dropdownMenu.addEventListener('mouseleave', function () {
+        dropdownTimeout = setTimeout(function () {
+          dropdownMenu.style.opacity = '0';
+          dropdownMenu.style.visibility = 'hidden';
+        }, 200);
+      });
+
+      // Touch support for dropdown
+      dropdownContainer.addEventListener('touchstart', function (e) {
+        e.preventDefault();
+        if (dropdownMenu.style.opacity === '1') {
+          dropdownMenu.style.opacity = '0';
+          dropdownMenu.style.visibility = 'hidden';
+        } else {
+          dropdownMenu.style.opacity = '1';
+          dropdownMenu.style.visibility = 'visible';
+        }
+      });
+    };
+
+    function toggleTheme() {
+      const currentTheme = document.body.classList.contains("light-mode")
+        ? "light"
+        : "dark";
+      const newTheme = currentTheme === "light" ? "dark" : "light";
+      applyTheme(newTheme);
+      localStorage.setItem("vein2vein_theme", newTheme);
+    }
+
+    function applyTheme(theme) {
+      const body = document.body;
+      if (theme === "dark") {
+        body.classList.remove("light-mode");
+        body.classList.add("dark-mode");
+        document.querySelector('.theme-toggle i').className = 'fas fa-sun';
+      } else {
+        body.classList.remove("dark-mode");
+        body.classList.add("light-mode");
+        document.querySelector('.theme-toggle i').className = 'fas fa-moon';
+      }
+    }
+  </script>
+</body>
+
+</html>

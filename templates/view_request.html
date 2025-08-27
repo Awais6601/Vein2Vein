@@ -1,0 +1,166 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<style>
+  /* ===== BASE STYLES ===== */
+  .request-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 1.25rem;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+
+  /* ===== HEADER STYLES ===== */
+  .request-header {
+    text-align: center;
+    margin-bottom: 1.5rem;
+  }
+
+  .request-header h1 {
+    color: #d10000;
+    font-size: 1.75rem;
+    font-weight: 600;
+    margin-bottom: 0.625rem;
+  }
+
+  /* ===== REQUEST BOX STYLES ===== */
+  .request-box {
+    background-color: #ffffff;
+    color: #333;
+    padding: 1.5rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 0.125rem 0.625rem rgba(0, 0, 0, 0.1);
+    margin-bottom: 1.875rem;
+  }
+
+  .request-box p {
+    margin-bottom: 0.9375rem;
+    font-size: 1rem;
+    line-height: 1.5;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .request-box p:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+  }
+
+  .request-box strong {
+    font-weight: 600;
+    color: #111827;
+    min-width: 6.25rem;
+  }
+
+  /* ===== STATUS STYLING ===== */
+  .status-pending {
+    color: #f59e0b;
+    font-weight: 600;
+  }
+
+  .status-accepted {
+    color: #10b981;
+    font-weight: 600;
+  }
+
+  .status-rejected {
+    color: #ef4444;
+    font-weight: 600;
+  }
+
+  /* ===== DARK MODE STYLES ===== */
+  .dark-mode .request-box {
+    background-color: #2d3748;
+    color: #f7fafc;
+    box-shadow: 0 0.125rem 0.625rem rgba(0, 0, 0, 0.3);
+  }
+
+  .dark-mode .request-box strong {
+    color: #f7fafc;
+  }
+
+  .dark-mode .request-box p {
+    border-bottom-color: #4a5568;
+  }
+
+  /* ===== RESPONSIVE ADJUSTMENTS ===== */
+  @media (max-width: 768px) {
+    .request-container {
+      padding: 1rem;
+    }
+
+    .request-header h1 {
+      font-size: 1.5rem;
+    }
+
+    .request-box {
+      padding: 1.25rem;
+    }
+
+    .request-box p {
+      font-size: 0.9375rem;
+    }
+
+    .request-box strong {
+      min-width: 5.625rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .request-header h1 {
+      font-size: 1.375rem;
+    }
+
+    .request-box {
+      padding: 1rem;
+    }
+
+    .request-box p {
+      font-size: 0.875rem;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+
+    .request-box strong {
+      min-width: 100%;
+    }
+  }
+</style>
+
+<div class="request-container">
+  <div class="request-header">
+    <h1>View Blood Request</h1>
+  </div>
+
+  <div class="request-box">
+    <p>
+      <strong>Blood Type:</strong> 
+      <span>{{ request_data.blood_type }}</span>
+    </p>
+    <p>
+      <strong>Location:</strong> 
+      <span>{{ request_data.location }}</span>
+    </p>
+    <p>
+      <strong>Urgency:</strong> 
+      <span>{{ request_data.urgency }}</span>
+    </p>
+    <p>
+      <strong>Contact:</strong> 
+      <span>{{ request_data.contact }}</span>
+    </p>
+    <p>
+      <strong>Date:</strong> 
+      <span>{{ request_data.date }}</span>
+    </p>
+    <p>
+      <strong>Status:</strong> 
+      <span class="status-{{ request_data.status|lower }}">{{ request_data.status }}</span>
+    </p>
+  </div>
+</div>
+
+{% endblock %}
