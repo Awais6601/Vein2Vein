@@ -1,0 +1,261 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="approved-finders-container">
+    <div class="admin-header">
+        <a href="{{ url_for('admin_dashboard') }}" class="back-button">
+            &larr; <span class="back-text">Back to Dashboard</span>
+        </a>
+        <h1 class="admin-title">✅ Approved Finders</h1>
+    </div>
+    
+    <div class="table-wrapper">
+        <table class="finders-table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Organization</th>
+                    <th>City</th>
+                    <th>Address</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for finder in finders %}
+                <tr>
+                    <td data-label="Name">{{ finder.get('full_name', 'N/A') }}</td>
+                    <td data-label="Email">{{ finder.get('email', 'N/A') }}</td>
+                    <td data-label="Phone">{{ finder.get('phone', 'N/A') }}</td>
+                    <td data-label="Organization">{{ finder.get('organization', 'N/A') }}</td>
+                    <td data-label="City">{{ finder.get('city', 'N/A') }}</td>
+                    <td data-label="Address">{{ finder.get('address', 'N/A') }}</td>
+                    <td data-label="Action" class="action-cell">
+                        <form action="{{ url_for('remove_finder') }}" method="POST">
+                            <input type="hidden" name="email" value="{{ finder.email }}">
+                            <button type="submit" class="remove-button">
+                                <i class="fas fa-trash"></i>
+                                <span class="button-text">Remove</span>
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<style>
+    /* ===== BASE STYLES ===== */
+    .approved-finders-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 1.25rem;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    /* ===== HEADER STYLES ===== */
+    .admin-header {
+        display: flex;
+        align-items: center;
+        gap: 1.25rem;
+        margin-bottom: 1.5rem;
+        flex-wrap: wrap;
+    }
+
+    .back-button {
+        padding: 0.625rem 1rem;
+        background: #3b82f6;
+        color: white;
+        text-decoration: none;
+        border-radius: 0.375rem;
+        font-weight: 500;
+        transition: all 0.2s ease;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .back-button:hover {
+        background: #2563eb;
+        transform: translateY(-0.125rem);
+        box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.1);
+    }
+
+    .back-text {
+        display: inline;
+    }
+
+    .admin-title {
+        font-size: 1.5rem;
+        color: #333;
+        margin: 0;
+    }
+
+    .dark-mode .admin-title {
+        color: #f0f0f0;
+    }
+
+    /* ===== TABLE STYLES ===== */
+    .table-wrapper {
+        overflow-x: auto;
+        margin-bottom: 2rem;
+        border-radius: 0.5rem;
+        box-shadow: 0 0.125rem 0.5rem rgba(0, 0, 0, 0.1);
+        background: #ffffff;
+    }
+
+    .dark-mode .table-wrapper {
+        box-shadow: 0 0.125rem 0.5rem rgba(0, 0, 0, 0.3);
+        background: #2d3748;
+    }
+
+    .finders-table {
+        width: 100%;
+        border-collapse: collapse;
+        color: #333;
+        min-width: 800px;
+    }
+
+    .dark-mode .finders-table {
+        color: #f0f0f0;
+    }
+
+    .finders-table th,
+    .finders-table td {
+        padding: 0.75rem 1rem;
+        text-align: left;
+        border-bottom: 1px solid #e0e0e0;
+    }
+
+    .dark-mode .finders-table th,
+    .dark-mode .finders-table td {
+        border-bottom: 1px solid #4a5568;
+    }
+
+    .finders-table th {
+        background: #f8f9fa;
+        font-weight: 600;
+        position: sticky;
+        top: 0;
+    }
+
+    .dark-mode .finders-table th {
+        background: #1a202c;
+    }
+
+    .finders-table tr:hover {
+        background: #f5f5f5;
+    }
+
+    .dark-mode .finders-table tr:hover {
+        background: #4a5568;
+    }
+
+    /* ===== ACTION BUTTON ===== */
+    .action-cell {
+        white-space: nowrap;
+    }
+
+    .remove-button {
+        padding: 0.5rem 0.75rem;
+        background: #e74c3c;
+        color: white;
+        border: none;
+        border-radius: 0.375rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .remove-button:hover {
+        background: #c0392b;
+        transform: translateY(-0.125rem);
+        box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.1);
+    }
+
+    .button-text {
+        display: inline;
+    }
+
+    /* ===== RESPONSIVE ADJUSTMENTS ===== */
+    @media (max-width: 1024px) {
+        .finders-table {
+            min-width: 700px;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .admin-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+
+        .admin-title {
+            font-size: 1.375rem;
+        }
+
+        .back-button {
+            width: 100%;
+            justify-content: center;
+        }
+
+        .finders-table th,
+        .finders-table td {
+            padding: 0.625rem 0.75rem;
+            font-size: 0.875rem;
+        }
+    }
+
+    @media (max-width: 640px) {
+        .approved-finders-container {
+            padding: 1rem;
+        }
+
+        .back-text {
+            display: none;
+        }
+
+        .back-button {
+            padding: 0.625rem;
+            border-radius: 50%;
+            width: 2.5rem;
+            height: 2.5rem;
+            justify-content: center;
+        }
+
+        .button-text {
+            display: none;
+        }
+
+        .remove-button {
+            padding: 0.5rem;
+            border-radius: 50%;
+            width: 2rem;
+            height: 2rem;
+            justify-content: center;
+        }
+
+        .remove-button i {
+            margin: 0;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .admin-title {
+            font-size: 1.25rem;
+        }
+
+        .finders-table {
+            min-width: 600px;
+        }
+    }
+</style>
+
+{% endblock %}

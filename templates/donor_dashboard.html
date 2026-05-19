@@ -1,0 +1,908 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<main class="dashboard-container">
+  <!-- Header -->
+  <h1 class="dashboard-title">Donor Dashboard</h1>
+
+  <div class="dashboard-layout">
+    <!-- Left Column - Profile Card -->
+    <div class="profile-column">
+      <div class="profile-card">
+        <img src="https://www.w3schools.com/howto/img_avatar.png" alt="Donor Avatar" class="profile-avatar">
+        <h3>{{ donor.full_name }}</h3>
+        <p class="profile-location">{{ donor.city }}</p>
+        
+        <div class="profile-details">
+          <div class="detail-item">
+            <span class="detail-label">Email:</span>
+            <span class="detail-value">{{ donor.email }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Phone:</span>
+            <span class="detail-value">{{ donor.phone }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Weight:</span>
+            <span class="detail-value">{{ donor.weight }} kg</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">DOB:</span>
+            <span class="detail-value">{{ donor.dob }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Last Donation:</span>
+            <span class="detail-value">{{ donor.last_donation or 'Never' }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Next Eligible:</span>
+            <span class="detail-value {% if donor.is_eligible %}eligible{% else %}not-eligible{% endif %}">
+              {{ donor.next_eligible_date or 'Now' }}
+            </span>
+          </div>
+        </div>
+        
+        <a href="{{ url_for('edit_donor_profile') }}?email={{ donor.email }}" class="edit-profile-btn">
+          Edit Profile
+        </a>
+      </div>
+    </div>
+
+    <!-- Right Column - Content -->
+    <div class="content-column">
+      <p class="welcome-message">Welcome, {{ donor.full_name }}</p>
+
+      <!-- Stats Cards -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <h4>Total Donations</h4>
+          <p class="stat-value donation-count">{{ total_donations }}</p>
+        </div>
+        <div class="stat-card">
+          <h4>Lives Saved</h4>
+          <p class="stat-value lives-saved">{{ lives_saved }}</p>
+        </div>
+        <div class="stat-card">
+          <h4>Blood Type</h4>
+          <p class="stat-value blood-type">{{ donor.blood_type }}</p>
+        </div>
+        <div class="stat-card">
+          <h4>Donation Status</h4>
+          <p class="stat-value {% if donor.is_eligible %}eligible{% else %}not-eligible{% endif %}">
+            {% if donor.is_eligible %}Eligible{% else %}Not Eligible{% endif %}
+          </p>
+        </div>
+      </div>
+
+      <!-- Availability Section -->
+      <div class="dashboard-section">
+        <h3>Availability</h3>
+        <div class="availability-details">
+          <div class="availability-item">
+            <span class="availability-label">Days:</span>
+            <span class="availability-value">{{ donor.availability.days | join(", ") }}</span>
+          </div>
+          <div class="availability-item">
+            <span class="availability-label">Times:</span>
+            <span class="availability-value">{{ donor.availability.times | join(", ") }}</span>
+          </div>
+          <div class="availability-item">
+            <span class="availability-label">Travel Radius:</span>
+            <span class="availability-value">{{ donor.travel_radius }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent Blood Requests -->
+      <div class="dashboard-section">
+        <div class="section-header">
+          <h3>Recent Blood Requests</h3>
+        </div>
+        
+        {% if requests %}
+        <!-- Desktop Table View -->
+        <div class="table-container desktop-view">
+          <table class="requests-table">
+            <thead>
+              <tr>
+                <th>Blood Type</th>
+                <th>Location</th>
+                <th>Urgency</th>
+                <th>Contact</th>
+                <th>Date</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for req in requests %}
+              <tr>
+                <td data-label="Blood Type">{{ req.blood_type }}</td>
+                <td data-label="Location">{{ req.location }}</td>
+                <td data-label="Urgency" class="urgency-{{ req.urgency|lower }}">{{ req.urgency }}</td>
+                <td data-label="Contact">{{ req.contact }}</td>
+                <td data-label="Date">{{ req.date }}</td>
+                <td data-label="Action" class="action-cell">
+                  {% if req.status != "accepted" and req.status != "rejected" %}
+                    {% if donor.is_eligible %}
+                    <form action="{{ url_for('accept_request', request_id=req.id) }}?email={{ donor.email }}" method="POST">
+                      <input type="hidden" name="donor_email" value="{{ donor.email }}">
+                      <button type="submit" class="action-btn accept-btn">
+                        <i class="fas fa-check"></i>
+                        <span class="btn-text">Accept</span>
+                      </button>
+                    </form>
+                    {% else %}
+                    <span class="status-badge not-eligible">Not Eligible</span>
+                    {% endif %}
+                    
+                    <form action="{{ url_for('reject_request', request_id=req.id) }}?email={{ donor.email }}" method="POST">
+                      <input type="hidden" name="donor_email" value="{{ donor.email }}">
+                      <button type="submit" class="action-btn reject-btn">
+                        <i class="fas fa-times"></i>
+                        <span class="btn-text">Reject</span>
+                      </button>
+                    </form>
+                  {% elif req.status == "accepted" %}
+                  <span class="status-badge accepted">Accepted</span>
+                  {% elif req.status == "rejected" %}
+                  <span class="status-badge rejected">Rejected</span>
+                  {% endif %}
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Mobile Slider View (similar to Finder Dashboard) -->
+        <div class="requests-slider mobile-view">
+          {% for req in requests %}
+          <div class="request-card">
+            <div class="card-header">
+              <span class="blood-type">{{ req.blood_type }}</span>
+              <span class="urgency urgency-{{ req.urgency|lower }}">{{ req.urgency }}</span>
+            </div>
+            <div class="card-body">
+              <div class="card-row">
+                <span class="card-label">Location:</span>
+                <span class="card-value">{{ req.location }}</span>
+              </div>
+              <div class="card-row">
+                <span class="card-label">Contact:</span>
+                <span class="card-value">{{ req.contact }}</span>
+              </div>
+              <div class="card-row">
+                <span class="card-label">Date:</span>
+                <span class="card-value">{{ req.date }}</span>
+              </div>
+            </div>
+            <div class="card-footer">
+              {% if req.status != "accepted" and req.status != "rejected" %}
+                {% if donor.is_eligible %}
+                <form action="{{ url_for('accept_request', request_id=req.id) }}?email={{ donor.email }}" method="POST">
+                  <input type="hidden" name="donor_email" value="{{ donor.email }}">
+                  <button type="submit" class="action-btn accept-btn">
+                    <i class="fas fa-check"></i> Accept
+                  </button>
+                </form>
+                {% else %}
+                <span class="status-badge not-eligible">Not Eligible</span>
+                {% endif %}
+                
+                <form action="{{ url_for('reject_request', request_id=req.id) }}?email={{ donor.email }}" method="POST">
+                  <input type="hidden" name="donor_email" value="{{ donor.email }}">
+                  <button type="submit" class="action-btn reject-btn">
+                    <i class="fas fa-times"></i> Reject
+                  </button>
+                </form>
+              {% elif req.status == "accepted" %}
+              <span class="status-badge accepted">Accepted</span>
+              {% elif req.status == "rejected" %}
+              <span class="status-badge rejected">Rejected</span>
+              {% endif %}
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state">
+          <i class="fas fa-tint"></i>
+          <p>No matching blood requests at the moment.</p>
+        </div>
+        {% endif %}
+      </div>
+
+      <!-- Donation History -->
+      <div class="dashboard-section">
+        <div class="section-header">
+          <h3>Donation History</h3>
+        </div>
+        
+        {% if history %}
+        <div class="table-container">
+          <table class="history-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Location</th>
+                <th>Recipient</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for entry in history %}
+              <tr>
+                <td data-label="Date">{{ entry.date }}</td>
+                <td data-label="Location">{{ entry.location }}</td>
+                <td data-label="Recipient">{{ entry.recipient }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        {% else %}
+        <div class="empty-state">
+          <i class="fas fa-history"></i>
+          <p>No donations yet.</p>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</main>
+
+<style>
+  /* ===== BASE STYLES ===== */
+  :root {
+    --primary-color: #ff0015;
+    --secondary-color: #457b9d;
+    --success-color: #2a9d8f;
+    --danger-color: #e63946;
+    --warning-color: #f4a261;
+    --light-color: #f1faee;
+    --dark-color: #1d3557;
+    --text-light: #333;
+    --text-dark: #f8f9fa;
+    --bg-light: #f8f9fa;
+    --bg-dark: #1a202c;
+    --card-bg-light: #ffffff;
+    --card-bg-dark: #2d3748;
+    --border-light: #e2e8f0;
+    --border-dark: #4a5568;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+
+  .dashboard-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 1.5rem;
+  }
+
+  .dark-mode .dashboard-container {
+    background-color: var(--bg-dark);
+    color: var(--text-dark);
+  }
+
+  /* ===== HEADER STYLES ===== */
+  .dashboard-title {
+    font-size: 2rem;
+    color: var(--primary-color);
+    margin-bottom: 1.5rem;
+    text-align: center;
+    font-weight: 700;
+  }
+
+  .dark-mode .dashboard-title {
+    color: #ff0000;
+  }
+
+  /* ===== LAYOUT STYLES ===== */
+  .dashboard-layout {
+    display: flex;
+    gap: 1.5rem;
+    align-items: flex-start;
+  }
+
+  .profile-column {
+    flex: 0 0 300px;
+    position: sticky;
+    top: 1.5rem;
+  }
+
+  .content-column {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  /* ===== PROFILE CARD STYLES ===== */
+  .profile-card {
+    background: var(--card-bg-dark);
+    color: var(--text-dark);
+    border-radius: 0.5rem;
+    padding: 1.5rem;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+
+  .dark-mode .profile-card {
+    background: var(--card-bg-dark);
+  }
+
+  .profile-avatar {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    margin: 0 auto 1rem;
+    object-fit: cover;
+    border: 3px solid var(--primary-color);
+  }
+
+  .profile-location {
+    font-size: 0.9rem;
+    color: #a0aec0;
+    margin-bottom: 1.5rem;
+    text-align: center;
+  }
+
+  .profile-details {
+    margin-bottom: 1.5rem;
+  }
+
+  .detail-item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border-dark);
+  }
+
+  .detail-label {
+    font-weight: 600;
+    color: #a0aec0;
+  }
+
+  .detail-value {
+    text-align: right;
+  }
+
+  .eligible {
+    color: var(--success-color);
+  }
+
+  .not-eligible {
+    color: var(--danger-color);
+  }
+
+  .edit-profile-btn {
+    display: block;
+    margin-top: auto;
+    padding: 0.75rem;
+    background: var(--secondary-color);
+    color: white;
+    text-align: center;
+    border-radius: 0.375rem;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease;
+  }
+
+  .edit-profile-btn:hover {
+    background: #386fa4;
+    transform: translateY(-0.125rem);
+  }
+
+  /* ===== CONTENT STYLES ===== */
+  .welcome-message {
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+    color: var(--text-light);
+  }
+
+  .dark-mode .welcome-message {
+    color: var(--text-dark);
+  }
+
+  /* ===== STATS GRID ===== */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .stat-card {
+    background: var(--card-bg-dark);
+    color: var(--text-dark);
+    padding: 1.25rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.1);
+    text-align: center;
+  }
+
+  .dark-mode .stat-card {
+    background: var(--card-bg-dark);
+  }
+
+  .stat-card h4 {
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+    color: #a0aec0;
+  }
+
+  .stat-value {
+    font-size: 1.75rem;
+    font-weight: 700;
+  }
+
+  .donation-count {
+    color: var(--primary-color);
+  }
+
+  .lives-saved {
+    color: var(--success-color);
+  }
+
+  .blood-type {
+    color: var(--secondary-color);
+  }
+
+  /* ===== DASHBOARD SECTIONS ===== */
+  .dashboard-section {
+    background: var(--card-bg-dark);
+    color: var(--text-dark);
+    border-radius: 0.5rem;
+    padding: 1.5rem;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.1);
+  }
+
+  .dark-mode .dashboard-section {
+    background: var(--card-bg-dark);
+  }
+
+  .section-header {
+    margin-bottom: 1rem;
+  }
+
+  .dashboard-section h3 {
+    font-size: 1.25rem;
+    color: var(--text-dark);
+    margin-bottom: 1rem;
+  }
+
+  /* ===== AVAILABILITY STYLES ===== */
+  .availability-details {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .availability-item {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .availability-label {
+    font-weight: 600;
+    color: #a0aec0;
+  }
+
+  /* ===== TABLE STYLES ===== */
+  .table-container {
+    overflow-x: auto;
+    margin-top: 1rem;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  th, td {
+    padding: 0.75rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border-dark);
+  }
+
+  th {
+    background: rgba(0, 0, 0, 0.1);
+    font-weight: 600;
+    color: var(--text-dark);
+  }
+
+  tr:hover {
+    background: rgba(255, 255, 255, 0.05);
+  }
+
+  /* ===== ACTION BUTTONS ===== */
+  .action-cell {
+    white-space: nowrap;
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .action-btn {
+    padding: 0.5rem 0.75rem;
+    border: none;
+    border-radius: 0.375rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .accept-btn {
+    background: var(--success-color);
+    color: white;
+  }
+
+  .accept-btn:hover {
+    background: #248277;
+    transform: translateY(-0.125rem);
+  }
+
+  .reject-btn {
+    background: var(--danger-color);
+    color: white;
+  }
+
+  .reject-btn:hover {
+    background: #c53030;
+    transform: translateY(-0.125rem);
+  }
+
+  .btn-text {
+    display: inline;
+  }
+
+  /* ===== STATUS BADGES ===== */
+  .status-badge {
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+  }
+
+  .accepted {
+    background: rgba(42, 157, 143, 0.2);
+    color: var(--success-color);
+  }
+
+  .rejected {
+    background: rgba(230, 57, 70, 0.2);
+    color: var(--danger-color);
+  }
+
+  .not-eligible {
+    background: rgba(230, 57, 70, 0.2);
+    color: var(--danger-color);
+  }
+
+  /* ===== URGENCY STYLES ===== */
+  .urgency-high {
+    color: var(--danger-color);
+    font-weight: 600;
+  }
+
+  .urgency-medium {
+    color: var(--warning-color);
+    font-weight: 600;
+  }
+
+  .urgency-low {
+    color: var(--success-color);
+    font-weight: 600;
+  }
+
+  /* ===== EMPTY STATE ===== */
+  .empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    color: #a0aec0;
+    text-align: center;
+  }
+
+  .empty-state i {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    color: var(--primary-color);
+  }
+
+  /* ===== SLIDER STYLES (from Finder Dashboard) ===== */
+  .requests-slider {
+    display: none;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    gap: 1rem;
+    padding: 0.5rem 0;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .request-card {
+    min-width: 85%;
+    scroll-snap-align: start;
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 0.5rem;
+    padding: 1rem;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.1);
+    margin-right: 1rem;
+  }
+
+  .request-card:last-child {
+    margin-right: 0;
+  }
+
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.75rem;
+    align-items: center;
+  }
+
+  .blood-type {
+    font-weight: 600;
+    color: var(--primary-color);
+    font-size: 1.1rem;
+  }
+
+  .card-body {
+    margin-bottom: 1rem;
+  }
+
+  .card-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .card-row:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+  }
+
+  .card-label {
+    font-weight: 600;
+    color: #a0aec0;
+  }
+
+  .card-value {
+    text-align: right;
+    max-width: 60%;
+    word-break: break-word;
+  }
+
+  .card-footer {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  /* ===== RESPONSIVE ADJUSTMENTS ===== */
+  @media (max-width: 1024px) {
+    .dashboard-container {
+      padding: 1.25rem;
+    }
+    
+    .profile-column {
+      flex: 0 0 280px;
+    }
+    
+    .stat-card {
+      padding: 1rem;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .dashboard-layout {
+      flex-direction: column;
+    }
+
+    .profile-column {
+      flex: 1;
+      width: 100%;
+      position: static;
+      margin-bottom: 1.5rem;
+    }
+    
+    .stats-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .dashboard-title {
+      font-size: 1.75rem;
+    }
+
+    .action-cell {
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+  }
+
+  @media (max-width: 576px) {
+    .dashboard-container {
+      padding: 1rem;
+    }
+    
+    .dashboard-title {
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+    }
+    
+    .stats-grid {
+      grid-template-columns: 1fr;
+      gap: 0.75rem;
+    }
+    
+    .dashboard-section {
+      padding: 1.25rem;
+    }
+    
+    .profile-avatar {
+      width: 80px;
+      height: 80px;
+    }
+    
+    th, td {
+      padding: 0.5rem;
+      font-size: 0.875rem;
+    }
+
+    .btn-text {
+      display: none;
+    }
+
+    .action-btn {
+      padding: 0.5rem;
+      border-radius: 50%;
+      width: 2rem;
+      height: 2rem;
+      justify-content: center;
+    }
+
+    /* Show slider and hide table on mobile */
+    .desktop-view {
+      display: none;
+    }
+    .mobile-view {
+      display: flex;
+    }
+
+    .request-card {
+      min-width: 85%;
+    }
+
+    .card-footer .action-btn {
+      padding: 0.5rem 0.75rem;
+      width: auto;
+      height: auto;
+      border-radius: 0.375rem;
+    }
+  }
+
+  @media (min-width: 577px) {
+    /* Show table and hide slider on larger screens */
+    .desktop-view {
+      display: block;
+    }
+    .mobile-view {
+      display: none;
+    }
+  }
+
+  @media (max-width: 400px) {
+    .dashboard-container {
+      padding: 0.75rem;
+    }
+    
+    .dashboard-title {
+      font-size: 1.375rem;
+    }
+    
+    .welcome-message {
+      font-size: 1rem;
+    }
+    
+    .stat-card h4 {
+      font-size: 0.875rem;
+    }
+    
+    .stat-value {
+      font-size: 1.5rem;
+    }
+    
+    table {
+      font-size: 0.8125rem;
+    }
+    
+    th, td {
+      padding: 0.375rem;
+    }
+
+    .request-card {
+      min-width: 90%;
+    }
+  }
+</style>
+
+<script>
+  // Simple slider functionality for the requests
+  document.addEventListener('DOMContentLoaded', function() {
+    const slider = document.querySelector('.requests-slider');
+    if (!slider) return;
+    
+    // Auto-scroll to the first card when page loads
+    if (slider.scrollWidth > slider.clientWidth) {
+      slider.scrollTo({
+        left: 0,
+        behavior: 'smooth'
+      });
+    }
+    
+    // Add touch event listeners for better mobile scrolling
+    let isDown = false;
+    let startX;
+    let scrollLeft;
+    
+    slider.addEventListener('mousedown', (e) => {
+      isDown = true;
+      startX = e.pageX - slider.offsetLeft;
+      scrollLeft = slider.scrollLeft;
+    });
+    
+    slider.addEventListener('mouseleave', () => {
+      isDown = false;
+    });
+    
+    slider.addEventListener('mouseup', () => {
+      isDown = false;
+    });
+    
+    slider.addEventListener('mousemove', (e) => {
+      if(!isDown) return;
+      e.preventDefault();
+      const x = e.pageX - slider.offsetLeft;
+      const walk = (x - startX) * 2;
+      slider.scrollLeft = scrollLeft - walk;
+    });
+    
+    // Also handle touch events for mobile devices
+    slider.addEventListener('touchstart', (e) => {
+      isDown = true;
+      startX = e.touches[0].pageX - slider.offsetLeft;
+      scrollLeft = slider.scrollLeft;
+    });
+    
+    slider.addEventListener('touchend', () => {
+      isDown = false;
+    });
+    
+    slider.addEventListener('touchmove', (e) => {
+      if(!isDown) return;
+      e.preventDefault();
+      const x = e.touches[0].pageX - slider.offsetLeft;
+      const walk = (x - startX) * 2;
+      slider.scrollLeft = scrollLeft - walk;
+    });
+  });
+</script>
+
+{% endblock %}

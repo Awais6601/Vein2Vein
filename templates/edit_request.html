@@ -1,0 +1,156 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<style>
+  .edit-request-container {
+    max-width: 600px;
+    margin: 30px auto;
+    padding: 30px;
+    background: #fff;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+
+  .edit-request-header {
+    text-align: center;
+    margin-bottom: 30px;
+  }
+
+  .edit-request-header h1 {
+    color: #d10000;
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 5px;
+  }
+
+  .form-group {
+    margin-bottom: 20px;
+  }
+
+  .form-group label {
+    display: block;
+    font-size: 14px;
+    font-weight: 500;
+    color: #333;
+    margin-bottom: 6px;
+  }
+
+  .form-group select,
+  .form-group input {
+    width: 100%;
+    padding: 10px 12px;
+    font-size: 14px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background-color: #f9f9f9;
+  }
+
+  .form-group select:focus,
+  .form-group input:focus {
+    border-color: #d10000;
+    outline: none;
+    background-color: #fff;
+    box-shadow: 0 0 0 2px rgba(209, 0, 0, 0.1);
+  }
+
+  .form-actions {
+    margin-top: 30px;
+    text-align: center;
+  }
+
+  .submit-btn {
+    background-color: #c40202;
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    font-size: 15px;
+    font-weight: 500;
+    border-radius: 4px;
+    cursor: pointer;
+    width: 100%;
+    transition: background-color 0.2s;
+  }
+
+  .submit-btn:hover {
+    background-color: #850000;
+  }
+
+  /* Dark mode styles */
+  body.dark .edit-request-container {
+    background: #2d2d2d;
+    border-color: #444;
+    color: #fff;
+  }
+
+  body.dark .form-group label {
+    color: #ddd;
+  }
+
+  body.dark .form-group select,
+  body.dark .form-group input {
+    background-color: #333;
+    border-color: #555;
+    color: #fff;
+  }
+
+  body.dark .form-group select:focus,
+  body.dark .form-group input:focus {
+    background-color: #3a3a3a;
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 600px) {
+    .edit-request-container {
+      margin: 20px 15px;
+      padding: 20px;
+    }
+  }
+</style>
+
+<div class="edit-request-container">
+  <div class="edit-request-header">
+    <h1>Edit Blood Request</h1>
+  </div>
+
+  <form method="POST">
+    <div class="form-group">
+      <label>Blood Type *</label>
+      <select name="blood_type" required>
+        <option selected>{{ request_data.blood_type }}</option>
+        <option>A+</option><option>A-</option><option>B+</option><option>B-</option>
+        <option>O+</option><option>O-</option><option>AB+</option><option>AB-</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>Location *</label>
+      <input type="text" name="location" value="{{ request_data.location }}" required />
+    </div>
+
+    <div class="form-group">
+      <label>Urgency *</label>
+      <select name="urgency" required>
+        <option selected>{{ request_data.urgency }}</option>
+        <option>High</option><option>Medium</option><option>Low</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>Contact *</label>
+      <input type="text" name="contact" value="{{ request_data.contact }}" required />
+    </div>
+
+    <div class="form-group">
+      <label>Date *</label>
+      <input type="date" name="date" value="{{ request_data.date }}" required />
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" class="submit-btn">Update Request</button>
+    </div>
+  </form>
+</div>
+
+{% endblock %}

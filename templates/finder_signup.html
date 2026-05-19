@@ -1,0 +1,291 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<!-- Main Container -->
+<div class="finder-registration-container">
+  <main class="finder-registration-box">
+    <!-- Floating Avatar -->
+    <div class="finder-avatar">
+      <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="Finder Icon">
+    </div>
+
+    <!-- Heading -->
+    <h1 class="finder-heading">
+      <span class="finder-heading-accent">Finder</span> Registration
+    </h1>
+
+    <!-- Registration Form -->
+    <form action="/signup/finder" method="POST" class="finder-form">
+      <!-- Personal Info -->
+      <section class="form-section">
+        <h2 class="section-title">Personal Information</h2>
+        <div class="form-grid">
+          <input name="full_name" required placeholder="Full Name *" class="form-input">
+          <input type="email" name="email" required placeholder="Email Address *" class="form-input">
+          <input name="password" required type="password" placeholder="Password *" class="form-input">
+          <input name="confirm_password" required type="password" placeholder="Confirm Password *" class="form-input">
+          <input name="phone" required placeholder="Phone Number *" class="form-input">
+          <input name="organization" placeholder="Hospital/Clinic/Organization (optional)" class="form-input">
+        </div>
+      </section>
+
+      <!-- Location Info -->
+      <section class="form-section">
+        <h2 class="section-title">Location Information</h2>
+        <div class="form-grid">
+          <input name="city" required placeholder="City *" class="form-input">
+          <input name="address" required placeholder="Complete Address *" class="form-input">
+        </div>
+      </section>
+
+      <!-- Terms and Conditions -->
+      <section class="terms-section">
+        <label class="terms-agreement">
+          <input type="checkbox" name="terms" required>
+          <span>I agree to the Terms and Conditions and Privacy Policy. I understand that I am responsible for providing accurate information in blood requests and will use this platform for legitimate medical purposes only.</span>
+        </label>
+      </section>
+
+      <!-- Submit Button -->
+      <button type="submit" class="submit-button">
+        Register as a Finder
+      </button>
+    </form>
+  </main>
+</div>
+
+<style>
+  /* ===== BASE STYLES ===== */
+  .finder-registration-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 1rem;
+    background-color: #f5f5f5;
+  }
+
+  .dark-mode .finder-registration-container {
+    background-color: #121212;
+  }
+
+  .finder-registration-box {
+    width: 100%;
+    max-width: 44rem;
+    background: #ffffff;
+    border-radius: 1rem;
+    box-shadow: 0 0.625rem 1.875rem rgba(0, 0, 0, 0.1);
+    padding: 4.375rem 1.875rem 1.875rem;
+    position: relative;
+    margin: 1.25rem 0;
+  }
+
+  .dark-mode .finder-registration-box {
+    background: #1a1a1a;
+    box-shadow: 0 0.625rem 1.875rem rgba(0, 0, 0, 0.3);
+  }
+
+  /* Avatar */
+  .finder-avatar {
+    position: absolute;
+    top: -3.125rem;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .finder-avatar img {
+    width: 6.25rem;
+    height: 6.25rem;
+    border-radius: 50%;
+    border: 0.3125rem solid white;
+    box-shadow: 0 0.3125rem 0.9375rem rgba(0, 0, 0, 0.2);
+    object-fit: cover;
+  }
+
+  .dark-mode .finder-avatar img {
+    border-color: #2d2d2d;
+  }
+
+  /* Heading */
+  .finder-heading {
+    font-size: 2rem;
+    font-weight: 800;
+    text-align: center;
+    color: #000000;
+    margin-bottom: 1.875rem;
+    line-height: 1.2;
+  }
+
+  .dark-mode .finder-heading {
+    color: #ffffff;
+  }
+
+  .finder-heading-accent {
+    color: #e60000;
+  }
+
+  /* Form Sections */
+  .form-section {
+    margin-bottom: 1.875rem;
+  }
+
+  .section-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 0.9375rem;
+    color: #333333;
+  }
+
+  .dark-mode .section-title {
+    color: #f0f0f0;
+  }
+
+  /* Form Grid */
+  .form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(18.75rem, 1fr));
+    gap: 0.9375rem;
+  }
+
+  /* Form Inputs */
+  .form-input {
+    width: 100%;
+    padding: 0.75rem 0.9375rem;
+    border: 1px solid #cccccc;
+    border-radius: 0.5rem;
+    background: #f5f5f5;
+    font-size: 1rem;
+    transition: all 0.2s ease;
+  }
+
+  .dark-mode .form-input {
+    background: #2d2d2d;
+    border-color: #444444;
+    color: #ffffff;
+  }
+
+  .form-input:focus {
+    outline: none;
+    border-color: #e60000;
+    box-shadow: 0 0 0 0.125rem rgba(230, 0, 0, 0.2);
+  }
+
+  .form-input::placeholder {
+    color: #999;
+  }
+
+  .dark-mode .form-input::placeholder {
+    color: #777;
+  }
+
+  /* Terms Section */
+  .terms-section {
+    margin: 1.875rem 0;
+  }
+
+  .terms-agreement {
+    display: flex;
+    gap: 0.625rem;
+    font-size: 0.875rem;
+    align-items: flex-start;
+  }
+
+  .terms-agreement input[type="checkbox"] {
+    accent-color: #e60000;
+    flex-shrink: 0;
+    margin-top: 0.1875rem;
+  }
+
+  /* Submit Button */
+  .submit-button {
+    width: 100%;
+    padding: 0.9375rem;
+    background: #e60000;
+    color: white;
+    border: none;
+    border-radius: 0.5rem;
+    font-size: 1.125rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .submit-button:hover {
+    background: #c50000;
+    transform: translateY(-0.125rem);
+    box-shadow: 0 0.3125rem 0.9375rem rgba(230, 0, 0, 0.3);
+  }
+
+  .submit-button:active {
+    transform: translateY(0);
+  }
+
+  /* ===== RESPONSIVE ADJUSTMENTS ===== */
+  @media (max-width: 768px) {
+    .finder-registration-box {
+      padding: 3.75rem 1.25rem 1.5625rem;
+    }
+
+    .finder-heading {
+      font-size: 1.75rem;
+      margin-bottom: 1.5625rem;
+    }
+
+    .form-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .finder-registration-container {
+      padding: 0.625rem;
+    }
+
+    .finder-registration-box {
+      padding: 3.125rem 0.9375rem 1.25rem;
+      border-radius: 0.75rem;
+    }
+
+    .finder-avatar img {
+      width: 5rem;
+      height: 5rem;
+      border-width: 0.25rem;
+    }
+
+    .finder-heading {
+      font-size: 1.5rem;
+    }
+
+    .terms-agreement {
+      font-size: 0.8125rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .finder-heading {
+      font-size: 1.375rem;
+    }
+
+    .section-title {
+      font-size: 1.125rem;
+    }
+
+    .submit-button {
+      padding: 0.8125rem;
+      font-size: 1rem;
+    }
+  }
+
+  @media (max-width: 375px) {
+    .finder-heading {
+      font-size: 1.25rem;
+    }
+
+    .finder-avatar img {
+      width: 4.375rem;
+      height: 4.375rem;
+    }
+  }
+</style>
+
+{% endblock %}

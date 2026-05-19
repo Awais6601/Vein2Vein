@@ -1,0 +1,216 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<style>
+  .cities-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 1.25rem;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+
+  .cities-header {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+
+  .cities-header h1 {
+    color: #d10000;
+    font-size: 1.75rem;
+    margin-bottom: 0.75rem;
+    font-weight: 700;
+  }
+
+  .cities-header p {
+    color: #555;
+    font-size: 1rem;
+    max-width: 37.5rem;
+    margin: 0 auto;
+    line-height: 1.5;
+  }
+
+  .map-container {
+    position: relative;
+    width: 100%;
+    height: 0;
+    padding-bottom: 56.25%; /* 16:9 aspect ratio */
+    border-radius: 0.5rem;
+    overflow: hidden;
+    box-shadow: 0 0.125rem 0.625rem rgba(0, 0, 0, 0.1);
+    margin-bottom: 2rem;
+    background: #f5f5f5;
+  }
+
+  #map {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  /* Dark mode styles */
+  .dark-mode .cities-header h1 {
+    color: #ff4d4d;
+  }
+
+  .dark-mode .cities-header p {
+    color: #bbb;
+  }
+
+  .dark-mode .map-container {
+    box-shadow: 0 0.125rem 0.625rem rgba(0, 0, 0, 0.3);
+    background: #2d2d2d;
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .cities-container {
+      padding: 1rem;
+    }
+
+    .cities-header h1 {
+      font-size: 1.5rem;
+    }
+
+    .cities-header p {
+      font-size: 0.875rem;
+      padding: 0 1rem;
+    }
+
+    .map-container {
+      padding-bottom: 75%; /* Taller aspect ratio on tablet */
+    }
+  }
+
+  @media (max-width: 480px) {
+    .cities-header h1 {
+      font-size: 1.375rem;
+    }
+
+    .map-container {
+      padding-bottom: 100%; /* Square aspect ratio on mobile */
+      border-radius: 0;
+      margin-left: -1rem;
+      margin-right: -1rem;
+      width: calc(100% + 2rem);
+    }
+  }
+</style>
+
+<div class="cities-container">
+  <div class="cities-header">
+    <h1>Cities We Serve</h1>
+    <p>
+      Vein2Vein connects donors and seekers across major Pakistani cities.
+    </p>
+  </div>
+
+  <div class="map-container">
+    <div id="map"></div>
+  </div>
+</div>
+
+<!-- Leaflet CDN -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" 
+  integrity="sha256-sA+qCkzD6Zo4PAi6tJAfrrPmtbVmUym+So2zMrrWySU="
+  crossorigin=""/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+  integrity="sha256-nPlqLhWkA7AypkRr7p/NqVJg9Qq6rXQ0R5crHnEjt3U="
+  crossorigin=""></script>
+
+<script>
+// Hardcoded coordinates for major Pakistani cities
+const cityCoordinates = {
+  "Lahore": [31.5497, 74.3436],
+  "Karachi": [24.8607, 67.0011],
+  "Islamabad": [33.6844, 73.0479],
+  "Rawalpindi": [33.5651, 73.0169],
+  "Faisalabad": [31.4504, 73.1350],
+  "Multan": [30.1575, 71.5249],
+  "Peshawar": [34.0151, 71.5249],
+  "Quetta": [30.1798, 66.9750],
+  "Hyderabad": [25.3960, 68.3578],
+  "Gujranwala": [32.1877, 74.1945]
+};
+
+const citiesFromServer = JSON.parse('{{ cities|tojson|safe }}');
+
+// Initialize map with responsive handling
+function initMap() {
+  const map = L.map('map', {
+    zoomControl: false, // We'll add our own positioned control
+    preferCanvas: true // Better performance for many markers
+  }).setView([30.3753, 69.3451], 5);  // Center of Pakistan
+
+  // Add zoom control with proper positioning
+  L.control.zoom({
+    position: 'topright'
+  }).addTo(map);
+
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+    maxZoom: 18,
+    minZoom: 5
+  }).addTo(map);
+
+  // Create a feature group to store markers
+  const markers = L.featureGroup().addTo(map);
+
+  const added = {};
+  const markerList = [];
+
+  citiesFromServer.forEach(city => {
+    if (cityCoordinates[city] && !added[city]) {
+      const [lat, lon] = cityCoordinates[city];
+      const marker = L.marker([lat, lon], {
+        title: city,
+        alt: `Marker for ${city}`,
+        riseOnHover: true
+      }).bindPopup(`<strong>${city}</strong><br>Registered Donors`);
+      
+      markers.addLayer(marker);
+      markerList.push(marker);
+      added[city] = true;
+    }
+  });
+
+  // Fit map to markers if there are any
+  if (markerList.length > 0) {
+    map.fitBounds(markers.getBounds(), {
+      padding: [50, 50], // Add some padding
+      maxZoom: 7 // Don't zoom in too close
+    });
+  }
+
+  // Handle window resize
+  let resizeTimer;
+  window.addEventListener('resize', function() {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(function() {
+      map.invalidateSize();
+      if (markerList.length > 0) {
+        map.fitBounds(markers.getBounds(), {
+          padding: [50, 50],
+          maxZoom: 7
+        });
+      }
+    }, 250);
+  });
+
+  // Handle map click to close popups
+  map.on('click', function() {
+    markers.eachLayer(function(layer) {
+      layer.closePopup();
+    });
+  });
+}
+
+// Initialize map when page loads
+document.addEventListener('DOMContentLoaded', function() {
+  // Small delay to ensure CSS transitions complete
+  setTimeout(initMap, 100);
+});
+</script>
+
+{% endblock %}

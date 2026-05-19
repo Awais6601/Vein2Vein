@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="admin-table-container">
+    <h1>📦 All Blood Requests</h1>
+    
+    <table class="admin-table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Requester Email</th>
+                <th>Blood Type</th>
+                <th>Location</th>
+                <th>Urgency</th>
+                <th>Contact</th>
+                <th>Date</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for req in requests %}
+            <tr>
+                <td>{{ req.id }}</td>
+                <td>{{ req.email }}</td>
+                <td>{{ req.blood_type }}</td>
+                <td>{{ req.location }}</td>
+                <td class="urgency-{{ req.urgency|lower }}">{{ req.urgency }}</td>
+                <td>{{ req.contact }}</td>
+                <td>{{ req.date }}</td>
+                <td class="status-{{ req.status|lower }}">{{ req.status }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<style>
+    .urgency-high {
+        color: #dc3545;
+        font-weight: bold;
+    }
+    .urgency-medium {
+        color: #ffc107;
+        font-weight: bold;
+    }
+    .urgency-low {
+        color: #28a745;
+        font-weight: bold;
+    }
+    .status-completed {
+        color: #28a745;
+    }
+    .status-active {
+        color: #17a2b8;
+    }
+    .status-pending {
+        color: #ffc107;
+    }
+</style>
+
+{% endblock %}

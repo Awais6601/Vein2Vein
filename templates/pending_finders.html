@@ -1,0 +1,281 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="admin-container">
+    <div class="admin-header">
+        <a href="{{ url_for('admin_dashboard') }}" class="back-button">
+            &larr; <span class="btn-text">Back to Dashboard</span>
+        </a>
+        <h1 class="admin-title">🕓 Pending Finders</h1>
+    </div>
+
+    <div class="table-wrapper">
+        <table class="requests-table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Organization</th>
+                    <th>City</th>
+                    <th>Address</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for finder in finders %}
+                <tr>
+                    <td data-label="Name">{{ finder.get('full_name', 'N/A') }}</td>
+                    <td data-label="Email">{{ finder.get('email', 'N/A') }}</td>
+                    <td data-label="Phone">{{ finder.get('phone', 'N/A') }}</td>
+                    <td data-label="Organization">{{ finder.get('organization', 'N/A') }}</td>
+                    <td data-label="City">{{ finder.get('city', 'N/A') }}</td>
+                    <td data-label="Address">{{ finder.get('address', 'N/A') }}</td>
+                    <td data-label="Action">
+                        <div class="action-buttons">
+                            <a href="/admin/approve_finder/{{ finder.email }}" class="approve-btn">
+                                <i class="fas fa-check"></i> <span class="btn-text">Approve</span>
+                            </a>
+                            <a href="/admin/reject_finder/{{ finder.email }}" class="delete-btn">
+                                <i class="fas fa-times"></i> <span class="btn-text">Reject</span>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<style>
+    /* ===== BASE STYLES ===== */
+    .admin-container {
+        padding: 1.25rem;
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+
+    .admin-header {
+        display: flex;
+        align-items: center;
+        gap: 1.25rem;
+        margin-bottom: 1.5rem;
+        flex-wrap: wrap;
+    }
+
+    .admin-title {
+        font-size: 1.5rem;
+        color: #333;
+        margin: 0;
+    }
+
+    .dark-mode .admin-title {
+        color: #f0f0f0;
+    }
+
+    /* ===== TABLE STYLES ===== */
+    .table-wrapper {
+        overflow-x: auto;
+        margin-bottom: 1.875rem;
+        border-radius: 0.5rem;
+        box-shadow: 0 0.125rem 0.5rem rgba(0, 0, 0, 0.1);
+        background: #ffffff;
+    }
+
+    .dark-mode .table-wrapper {
+        box-shadow: 0 0.125rem 0.5rem rgba(0, 0, 0, 0.3);
+        background: #2d2d2d;
+    }
+
+    .requests-table {
+        width: 100%;
+        border-collapse: collapse;
+        color: #333;
+        min-width: 800px;
+    }
+
+    .dark-mode .requests-table {
+        color: #f0f0f0;
+    }
+
+    .requests-table th,
+    .requests-table td {
+        padding: 0.75rem 1rem;
+        text-align: left;
+        border-bottom: 1px solid #e0e0e0;
+    }
+
+    .dark-mode .requests-table th,
+    .dark-mode .requests-table td {
+        border-bottom: 1px solid #444;
+    }
+
+    .requests-table th {
+        background: #f8f9fa;
+        font-weight: 600;
+        position: sticky;
+        top: 0;
+    }
+
+    .dark-mode .requests-table th {
+        background: #1a1a1a;
+    }
+
+    .requests-table tr:nth-child(even) {
+        background-color: #f9f9f9;
+    }
+
+    .dark-mode .requests-table tr:nth-child(even) {
+        background-color: #2d2d2d;
+    }
+
+    .requests-table tr:hover {
+        background: #f5f5f5;
+    }
+
+    .dark-mode .requests-table tr:hover {
+        background: #3d3d3d;
+    }
+
+    /* ===== BUTTON STYLES ===== */
+    .back-button {
+        padding: 0.625rem 1rem;
+        background: #3b82f6;
+        color: white;
+        text-decoration: none;
+        border-radius: 0.375rem;
+        font-weight: 500;
+        transition: all 0.2s ease;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .back-button:hover {
+        background: #2563eb;
+        transform: translateY(-0.125rem);
+        box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.1);
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+    }
+
+    .approve-btn,
+    .delete-btn {
+        padding: 0.5rem 0.75rem;
+        color: white;
+        border: none;
+        border-radius: 0.375rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        text-decoration: none;
+    }
+
+    .approve-btn {
+        background: #28a745;
+    }
+
+    .approve-btn:hover {
+        background: #218838;
+        transform: translateY(-0.125rem);
+        box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.1);
+    }
+
+    .delete-btn {
+        background: #e74c3c;
+    }
+
+    .delete-btn:hover {
+        background: #c0392b;
+        transform: translateY(-0.125rem);
+        box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-text {
+        display: inline;
+    }
+
+    /* ===== RESPONSIVE ADJUSTMENTS ===== */
+    @media (max-width: 1024px) {
+        .requests-table {
+            min-width: 700px;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .admin-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.75rem;
+        }
+
+        .requests-table th,
+        .requests-table td {
+            padding: 0.625rem 0.75rem;
+            font-size: 0.875rem;
+        }
+
+        .back-button,
+        .approve-btn,
+        .delete-btn {
+            padding: 0.5rem 0.75rem;
+            font-size: 0.875rem;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .admin-container {
+            padding: 1rem;
+        }
+
+        .admin-title {
+            font-size: 1.375rem;
+        }
+
+        .back-button .btn-text {
+            display: none;
+        }
+
+        .back-button {
+            padding: 0.625rem;
+            border-radius: 50%;
+            width: 2.5rem;
+            height: 2.5rem;
+            justify-content: center;
+        }
+
+        .action-buttons {
+            flex-direction: column;
+            gap: 0.375rem;
+        }
+
+        .approve-btn,
+        .delete-btn {
+            justify-content: center;
+            padding: 0.5rem;
+            border-radius: 50%;
+            width: 2rem;
+            height: 2rem;
+        }
+
+        .btn-text {
+            display: none;
+        }
+    }
+
+    @media (max-width: 400px) {
+        .admin-title {
+            font-size: 1.25rem;
+        }
+    }
+</style>
+
+{% endblock %}

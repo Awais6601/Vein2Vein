@@ -1,0 +1,320 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="admin-container">
+    <div class="admin-header">
+        <a href="{{ url_for('admin_dashboard') }}" class="back-button">
+            &larr; Back to Dashboard
+        </a>
+        <h1 class="admin-title">🔍 Active Blood Requests</h1>
+    </div>
+
+    <div class="table-wrapper">
+        <table class="requests-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Blood Type</th>
+                    <th>Location</th>
+                    <th>Urgency</th>
+                    <th>Contact</th>
+                    <th>Date</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for req in requests %}
+                {% if req.status == "Active" %}
+                <tr>
+                    <td data-label="ID">{{ req.id|truncate(8) }}</td>
+                    <td data-label="Blood Type">{{ req.blood_type }}</td>
+                    <td data-label="Location">{{ req.location }}</td>
+                    <td data-label="Urgency" class="urgency-{{ req.urgency|lower }}">{{ req.urgency }}</td>
+                    <td data-label="Contact">{{ req.contact }}</td>
+                    <td data-label="Date">{{ req.date }}</td>
+                    <td data-label="Action" class="action-buttons">
+                        <form action="{{ url_for('remove_active_request', request_id=req.id) }}" method="POST">
+                            <button type="submit" class="delete-btn" onclick="return confirm('Are you sure you want to remove this request?')">
+                                <i class="fas fa-trash"></i>
+                                <span class="btn-text">Remove</span>
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                {% endif %}
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<style>
+    /* ===== BASE STYLES ===== */
+    .admin-container {
+        padding: 1rem;
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+
+    .admin-header {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+        flex-wrap: wrap;
+    }
+
+    .admin-title {
+        font-size: 1.5rem;
+        color: #333;
+        margin: 0;
+    }
+
+    .dark-mode .admin-title {
+        color: #f0f0f0;
+    }
+
+    /* ===== TABLE STYLES ===== */
+    .table-wrapper {
+        overflow-x: auto;
+        margin-bottom: 2rem;
+        border-radius: 0.5rem;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        background: #ffffff;
+    }
+
+    .dark-mode .table-wrapper {
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        background: #2d2d2d;
+    }
+
+    .requests-table {
+        width: 100%;
+        border-collapse: collapse;
+        color: #333;
+        min-width: 600px;
+    }
+
+    .dark-mode .requests-table {
+        color: #f0f0f0;
+    }
+
+    .requests-table th,
+    .requests-table td {
+        padding: 0.75rem 1rem;
+        text-align: left;
+        border-bottom: 1px solid #e0e0e0;
+    }
+
+    .dark-mode .requests-table th,
+    .dark-mode .requests-table td {
+        border-bottom: 1px solid #444;
+    }
+
+    .requests-table th {
+        background: #f8f9fa;
+        font-weight: 600;
+        position: sticky;
+        top: 0;
+    }
+
+    .dark-mode .requests-table th {
+        background: #1a1a1a;
+    }
+
+    .requests-table tr:hover {
+        background: #f5f5f5;
+    }
+
+    .dark-mode .requests-table tr:hover {
+        background: #3d3d3d;
+    }
+
+    /* ===== URGENCY STYLES ===== */
+    .urgency-high {
+        color: #e74c3c;
+        font-weight: bold;
+    }
+
+    .urgency-medium {
+        color: #f39c12;
+        font-weight: bold;
+    }
+
+    .urgency-low {
+        color: #2ecc71;
+        font-weight: bold;
+    }
+
+    .dark-mode .urgency-high {
+        color: #ff6b6b;
+    }
+
+    .dark-mode .urgency-medium {
+        color: #feca57;
+    }
+
+    .dark-mode .urgency-low {
+        color: #1dd1a1;
+    }
+
+    /* ===== BUTTON STYLES ===== */
+    .back-button {
+        padding: 0.6rem 1rem;
+        background: #3498db;
+        color: white;
+        text-decoration: none;
+        border-radius: 0.375rem;
+        font-weight: 500;
+        transition: all 0.2s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .back-button:hover {
+        background: #2980b9;
+        transform: translateY(-1px);
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 0.5rem;
+    }
+
+    .delete-btn {
+        padding: 0.5rem 0.75rem;
+        background: #e74c3c;
+        color: white;
+        border: none;
+        border-radius: 0.375rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .delete-btn:hover {
+        background: #c0392b;
+        transform: translateY(-1px);
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-text {
+        display: inline;
+    }
+
+    /* ===== RESPONSIVE ADJUSTMENTS ===== */
+    @media (max-width: 1024px) {
+        .requests-table th,
+        .requests-table td {
+            padding: 0.6rem 0.8rem;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .admin-container {
+            padding: 0.8rem;
+        }
+
+        .admin-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.8rem;
+        }
+
+        .admin-title {
+            font-size: 1.3rem;
+        }
+
+        .back-button,
+        .delete-btn {
+            padding: 0.5rem 0.8rem;
+            font-size: 0.85rem;
+        }
+    }
+
+    @media (max-width: 640px) {
+        .table-wrapper {
+            border-radius: 0;
+            margin-left: -0.8rem;
+            margin-right: -0.8rem;
+            width: calc(100% + 1.6rem);
+        }
+
+        .requests-table {
+            min-width: 100%;
+        }
+
+        .requests-table thead {
+            display: none;
+        }
+
+        .requests-table tr {
+            display: block;
+            margin-bottom: 1rem;
+            border-bottom: 2px solid #e0e0e0;
+            padding: 0.5rem;
+        }
+
+        .dark-mode .requests-table tr {
+            border-bottom: 2px solid #444;
+        }
+
+        .requests-table td {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 0.8rem;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .dark-mode .requests-table td {
+            border-bottom: 1px solid #444;
+        }
+
+        .requests-table td::before {
+            content: attr(data-label);
+            font-weight: 600;
+            margin-right: 1rem;
+            flex: 1;
+        }
+
+        .requests-table td:last-child {
+            border-bottom: none;
+            justify-content: flex-end;
+        }
+
+        .btn-text {
+            display: none;
+        }
+
+        .delete-btn {
+            padding: 0.5rem;
+            border-radius: 50%;
+            width: 2rem;
+            height: 2rem;
+            justify-content: center;
+        }
+
+        .action-buttons {
+            justify-content: flex-end;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .admin-title {
+            font-size: 1.2rem;
+        }
+
+        .back-button {
+            padding: 0.5rem 0.8rem;
+            font-size: 0.8rem;
+        }
+    }
+</style>
+
+{% endblock %}
